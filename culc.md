@@ -33,6 +33,11 @@ print(f"call={call:.2f}")
 # Nd1=-d1
 # Nd2=-d2
 # put2 =  -(price*Nd1) + (sqprice/(pow((1+rate), date/workingday))) * Nd2
+# プットコールパリティ cf25
+   
+# C:コール, K:権利行使価格, P:プット価格, S:時価
+# C+K=P+S
+# P=C+K-S
 put3 = call + sqprice - price
 print(f"put={put3:.2f}")
 ```
