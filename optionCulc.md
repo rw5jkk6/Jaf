@@ -1,8 +1,9 @@
+## インストール
 - python3 -m pip install numpy
 - python3 -m pip install scipy
 
+## copyして使う
 ```py
-
 import numpy as np
 import math
 from scipy.stats import norm 
@@ -24,8 +25,8 @@ nd2 = norm.cdf(d2)
 call = price*nd1-sqprice*math.exp(-rate*date/workingday)*nd2
 print(f"call={call:.2f}")
 
-# プットコールパリティ cf25   
-# C:コール, K:権利行使価格, P:プット価格, S:時価
+# プットコールパリティからプット価格を求める cf25   
+# C:コール価格, K:権利行使価格, P:プット価格, S:時価
 # C+K=P+S
 # P=C+K-S
 put = call + sqprice - price
