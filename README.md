@@ -40,15 +40,33 @@
   - `sudo gem install wpscan` 
 - SecList
   - パスワードの辞書
-  - GitHub, SecListsで検索してファイルごとダウンロードして解凍
-  - `unzip フォルダ`
+  - `cd ~/vulnhub`
+  - `wget https://github.com/danielmiessler/SecLists/archive/refs/heads/master.zip`
+  - `unzip master.zip`
 
+## IPアドレスの紹介
+### IPアドレスの紹介
+- `192.168.56.1` hostであるWindowsのこと
+- `192.168.56.100` DHCP
+
+### IPアドレスの固定
+- ParrotOSのアドレスを`192.168.56.10`にする
+- System -> Preferences -> Internet and Network -> Advanced Network Configuration
+- Wired connection1 -> IPv4 Settings
+- Method Manual
+```
+Addresss 192.168.56.10
+Network 24
+Gateway 192.168.56.14
+```
+- save
 ## ターゲットOSをインポートする
 - ターゲットOSをサイトからダウンロードする
   - (例) `https://www.vulnhub.com/entry/potato-1,529/`のDownload(Mirror)からダウンロード
 - ダウンロードしたファイルをダブルクリックする
 - ~virtualboxでParrotOSでやった時のようにダウンロードした`potato.ova`ファイルをインポートする~
 - 全部デフォルトでOK
+- 表示の下の方に、[無効な設定が見つかりました]と出ると設定が変えれないので設定を変更する
 - **設定のネットワークはParrotOSと同じホストオンリーアダプターにする**
 - 起動できるか確認する
 
@@ -66,3 +84,9 @@
 - マネージャーの左から`ParrotOSSeccurityEdition`を選んで`設定`を押す
   - ネットワークのアダプター1から割り当てにホストオンリーアダプターを選ぶ
   - 仮想マシンを起動して右下のアイコン(パソコンが前後に2台に並んでるやつ)をクリックするとIPアドレスが割り当てられてるのを確認する  
+
+## 拡張子がvmdkをインストールする
+- vmdkファイルをダウンロードしたら、わかりやすいようにデスクトップにコピーする
+- VirtualBoxを起動する
+- 新規 -> 名前を入力する -> ハードウェアを選択する -> すでにある仮想ハードディスクファイルを使用する -> さっきのデスクトップにコピーしたファイルを選択 -> 完了
+- いつものように起動する
