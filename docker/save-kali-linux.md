@@ -1,10 +1,23 @@
-
 ## Docker imageを保存する
 ### kaliにインストールするコマンド
-- cewl,fping,gobuster,exiftool,ftp
+- cewl,fping,gobuster,exiftool,ftp,hashcat
+
+- コマンドが入っているかを確認するコマンド
+  - `apt list --installed`
+  - または
+  - `grep "install" /var/log/dpkg.log` 
+- コマンドの詳細を知る
+  - `apt-cache show パッケージ名` 
+
+### 取得するファイル
+- rockyou.txt
+- php-reverse-shell
+  - `wget https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php` 
+- Linpeas
+  - `wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh -p ~/`
 
 ### saveの前にインストールするコマンド
-- apt install -y cewl fping gobuster exiftool ftp
+- `apt install -y cewl fping gobuster exiftool ftp hashcat`
 
 ### imageをcommitする
 - 保存するコンテナを確認する
