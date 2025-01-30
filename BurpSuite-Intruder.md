@@ -1,0 +1,9 @@
+- burpsuiteを起動
+- ブラウザに`192.168.56.?/kzMb5nVYJw`
+- keyに適当にunkoとでも入力して`intercept is on`にする
+- 右クリックして`send to intruder`を選ぶ
+- Proxyの右側のIntruderを選ぶと同じリクエストがある
+- unkoのところに右側にあるボタンで§(セクション記号)で§unko§と挟む。またはAuto§を押してもいい
+- Payloadsを選んで、`enter a new item`にaと入力してAddを押す。次にeliteを入れる、これは正解のパスワード
+- start attackする
+- Lengthの一番少ないのが答え。eliteで右クリックしてDefine extract grep from responseを選ぶ
