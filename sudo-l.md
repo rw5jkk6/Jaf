@@ -5,33 +5,32 @@
 ### unkoユーザの追加とunko.shの設定
 - rootになる
 - `useradd -m unko`
+  - `-m`をつけるとhomeを作ることができる 
 - unkoにパスワードを設定する。
   - `passwd unko`
   - パスワードはunkoにでもしておく
-- ルートにnotesフォルダを作って、hello unkoと表示するシェルスクリプト,unko.shを作る
+- ルートにnotesフォルダを作って、`I am unko`と表示するシェルスクリプト,unko.shを作る
 - Permmisionは`chmod 700 unko.sh`
 
 ### unkoはunko.shを実行できない
-- unkoユーザになる
-- `/bin/nice /notes/unko.sh`を実行する
+- unkoユーザになる。使いにくいシェルだが気にしない
+- `/notes/unko.sh`を実行する
 - 当然実行できない
 
 ### sudo -lの設定をする
 - rootに戻る。
   - `su unko`でもできるはずだが、ダメなら,`ctrl + d`で戻る
-- `sudo visudo -s`を開けて下のを書く。
-  - これはsudoを管理するファイル専用のvimみたいなもので、vimと異なり保存の際に正確に書いてあるかテストしてくれる。`-s`はstrict(厳格)の意味で、よりテストしてくれる。vimでも開くことができるが、readonlyなので強制的に保存する必要がある
+- `visudo -s`を開けて下のを書く。
+  - これはsudoを管理するファイル専用のvimみたいなもので、vimと異なり保存の際に正確に書いてあるかテストしてくれる。`-s`はstrict(厳格)の意味で、間違って書くとエラーを出してくれる。vimでも開くことができるが、readonlyなので強制的に保存する必要がある
   - `%sudo ALL=(ALL:ALL) ALL`
   - %があるのはグループのこと、つまりsudoはグループのこと
-- `unko  ALL=(ALL:ALL) /bin/nice /notes/*`
+- `unko  ALL=(ALL:ALL) /notes/*`
 - 指示に従って閉じる
 
 ### unkoでunko.shを実行する
 - unkoになる
-- `sudo /bin/nice /notes/unko.sh`を実行する
-
-### rootになる
-- `sudo /bin/nice /notes/../bin/bash`を実行する
+- `sudo -l`でunko.shを使えるのを確認する
+- `sudo /notes/unko.sh`を実行する
 
 ## unkoをsudoグループに追加する
 - sudoはグループなので、`/etc/group`にuserが追加されているわかる。当然、unkoもsudoグループに追加すればsudoが使えるようになる
