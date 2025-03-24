@@ -1,5 +1,15 @@
 ## LupinOne
 
+## Question
+- owasp-zapを使う(まだしなくていい)
+- ステガノグラフィを調べる
+- raft-large-directoriesとrockyouテキストの単語数を調べる
+- localとfindコマンドの違いは
+- 秘密鍵と公開鍵の中身のフォーマットの違いは
+- `$()`これは何？何と呼ぶ？
+- ttyコマンドとは
+- `sh < $(tty) > $(tty) 2> $(tty)`これは何
+- base58とbase64の違いは
 
 ### ポートスキャンまで同じ
 - 22,80
@@ -55,7 +65,7 @@
 - john the ripperで使えるようにフォーマットを変換する
   -  `python3 ssh2john_v2.py key > passphrase.txt`
 - 暗号解析
-  - `john passphrase.txt -wordlist=/usr/share/wordlists/fasttrack.txt`
+  - `sudo john passphrase.txt -wordlist=/usr/share/wordlists/fasttrack.txt`
 - パスフレーズが取得できる
   - `P@55w0rd!` 
 
