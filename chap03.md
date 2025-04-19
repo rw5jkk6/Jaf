@@ -11,7 +11,22 @@
   - `j` 一行進む。vimと同じ
   - `k` 一行戻る。vimと同じ
   - `/ word` wordを探索する
+  - `shift プラス >` ページの一番最後にいく
+  - `shift プラス <` ページの先頭にいく
+  - `q` 閉じる
+- lessの問題
+  - `less /etc/passwd`
+  - sshを検索する
+  - 一番最後までいく 
 - findコマンドを使って、/etcディレクトリからpasswdのファイルを探す 143
+
+### 4 manコマンド
+- ページ全体で表示する
+  - `man キーワード` 
+- 文字列で検索して一覧で表示する
+  - `man -k キーワード` 
+- 複数単語で検索する
+  - `man -k キーワード | grep "キーワード"` 
 
 ### 3 グロブとは? `ls`,`ls *`の違いは? 144
 - `ls *`はひとつ下の階層まで表示する
@@ -58,6 +73,11 @@
 
 ### 7 dpkg
 - `dpkg -l`と`apt list --installed`は同じ
+- パッケージの削除
+  - `apt remove <Package>`
+- パッケージの完全削除。/etcなどの設定ファイルも削除する
+  - `apt purge <Package>`
+
 
 ### 8 
 - `ps aux`
@@ -76,7 +96,21 @@ bash
 bash
 ps f
 ```
+
+- アプリをkillする
+- killに用意されているシグナルの一覧を表示する
+  - `kill -l` 
+- wiresharkを立ち上げる
+  - `sudo wireshark`
+- wiresharkのプロセスIDを調べる
+  - `ps au`または`pgrep wireshark`
+- wiresharkをkillする
+  - `kill 番号` 
+     
 ### 9
+- nmapはどちらのコマンドが使われるか
+  - `type - nmap`
+  - `echo $PATH` 
 - シェル変数と環境変数の違いは
 
 
