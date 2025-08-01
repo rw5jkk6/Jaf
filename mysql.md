@@ -41,4 +41,18 @@
 - DROP DATABASE myunko;
   - データベースを削除します   
 
-## 標準
+## Sakilaデータを使う
+- ubuntuのhomeにmysqlといディレクトリを作って移動する
+```
+wget https://downloads.mysql.com/docs/sakila-db.zip
+unzip sakila-db.zip
+cd sakila-db
+
+mysql -u root -p
+
+SOURCE sakila-schema.sql;
+SOURCE sakila-data.sql;
+```
+- chatGPTに聞いて実践する
+  - `mysqlのsakilaのデータを説明して`
+  - `mysqlのsakilaで初歩的な問題と解答、解説を作って`
