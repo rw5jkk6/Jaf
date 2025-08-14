@@ -1,0 +1,12 @@
+- `sudo -u postgres psql -c "insert into persons(name) values ('jane smith');" -d dt`- `sudo systemctl status posgresql`
+  - 書き込みができなくてerrorが出る 
+- `journalctl -u postgresql`
+- `cat /var/log/syslog`
+- 容量を見ることができる。100%なのがわかる
+  - `df -h`
+- `cd /opt/pdgata`
+- `du -sh *`
+- `rm -rf /opt/pddata/file*.bk`
+- `sudo systemctl restart postgresql`
+- `sudo -u postgres psql -c "insert into persons(name) values ('jane smith');" -d dt`
+  - `INSERT 0 1`
