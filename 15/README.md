@@ -3,9 +3,6 @@
 ### ポートスキャンまで同じ
 - 22,80
 
-### 画像を調べる
-- ステガノグラフィを調べる
-
 ### robots.txtを見る
 - `curl http://$IP/robots.txt` 
 - ヒントは`/~myfiles`で、ディレクトリの初めに~がついていることがわかる
@@ -19,10 +16,6 @@
 - 見つかったファイルは`secret` `myfiles`、時間が長いので2つ見つけたら止める
 - `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
   - helpを見て`--h?`を他に行や単語数、文字数でもやってみる 
-
-- (別解)
-- `gobuster fuzz -u http://$IP/~FUZZ -w /usr/share/wordlists/dirb/common.txt -b 404`
-  - `secret` 異なる辞書を使っている 
 
 ### サイトを見る
 - 見つけたリンクでサイトを翻訳して確認する。分かったことがある
@@ -49,10 +42,6 @@
 - また隠れファイルなので頭に`.`をつける。正直、これだけのヒントでFUZZの頭にドットをつけるのに気づくのは難しいと思う
 - `wfuzz -c -z file,./custom_rockyou.txt --hc 400,404 "http://$IP/~secret/.FUZZ.txt"`
   - `--hc`statusの400,404は表示させない 
-- (別解)
-  - `gobuster fuzz -u http://$IP/~secret/.FUZZ -w /usr/share/wordlists/rockyou.txt -b 404`
-- (参考)辞書は他ので使える
-  - /usr/share/wordlists/SecLists-master/Discovery/Web-Content/directory-list-2.3-small.txt
 
 ### textのダウンロード
 - `curl http://$IP/~secret/.mysecret.txt > .mysecret2.txt`
