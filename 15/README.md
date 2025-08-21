@@ -13,6 +13,8 @@
   - `-c`でカラー表示
   - `-z file,`は辞書の指定だが、わかりにくいので`-w`でいい
   - 初めは`--h?`をつけずに実行して関係なさそうなのを探す。ここでは404のステータスコードを返しているので`--hc 404`をつける
+-　これでもいける
+  - `wfuzz -c -w /usr/share/wordlists/rockyou.txt -u http://$IP/~FUZZ/ --hc 404`
 - 見つかったファイルは`secret` `myfiles`、時間が長いので2つ見つけたら止める
 - `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
   - helpを見て`--h?`を他に行や単語数、文字数でもやってみる 
