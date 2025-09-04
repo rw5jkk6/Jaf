@@ -1,3 +1,13 @@
+### apacheのログの見方
+- `xxx.xx.xx.xxx - - [11/Dec/2019:12:01:22 +0000] "GET / HTTP/1.0" 200 35 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3602.2 Safari/537.36"`
+  - ログはスペースで区切られている
+  - `xxx.xx.xx.xxx` 送信元アドレス
+  - `[11/Dec/2019:12:01:22 +0000]` UTD時間なので日本時間にするには+9を足す
+  - `"GET / HTTP/1.0"`　左からメソッド、リクエスト対象、HTTPのバージョン
+  - `200`ステータスコード
+  - `35`バイト数
+  - `"Mozilla ~ Safari/537.36"`User-Agent
+
 ### 問題(access1000.log)
 1. logの数は
 2. ログはいつから始まって、いつで終わっている
@@ -7,7 +17,8 @@
 6. どこへのアクセスが多かったか
 7. どのタイミングで侵入に成功したか？詳細の内容は？
 8. サイト内で何か行なったか？
-9. cmdでosコマンドインジェクションしてる？cmdで探す
+9. 指定されたリソースにデータを送信しているか？
+10. cmdでosコマンドインジェクションしてる？cmdで探す
 
 
 ### 解答(access1000.log)
@@ -20,4 +31,5 @@
 6. `awk -F '"' '{print $2}' access1000.log | sort | uniq -c | sort`
 7. `grep -a -E 'wp-login.php|wp-admin' access1000.log | grep '200'`
 8. `grep -a -E -v 'wp-login.php|wp-admin|gobuster' access1000.log `
-9. `grep -a -E -v 'wp-login.php|wp-admin|gobuster' access1000.log | grep -a 'cmd'`
+9. `grep -a 'POST' access1000.log`
+10. `grep -a -E -v 'wp-login.php|wp-admin|gobuster' access1000.log | grep -a 'cmd'`
