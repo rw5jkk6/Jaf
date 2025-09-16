@@ -105,13 +105,20 @@
 - プロンプトが返ってくる `echo $SHELL`でrbashという制限が多いシェルだとわかる 
 
 ### 通常のシェルを使えるようにする
-  - viは使えるのでGTFOBinsで`vi`でシェルを呼び出すのを見つける
-  - viを呼び出す
-  - `:set shell=/bin/sh`
-  - Enterを押す
-  - `:shell`
-  - Enterを押す
-  - `$`が出たら成功、これで通常のシェルが使えるようになる
+- viは使えるのでGTFOBinsで`vi`でシェルを呼び出すのを見つける
+- viを呼び出す
+- viのsetコマンドの説明
+  - setコマンドはviの設定をすることができる
+  - 例えば`:set number`とすると行数を表示できる。そして頭に`:set no~`noをつけると解除できる
+  - 今使っている設定を知るには`:set オプション?`とする 
+- 今使っているshellを調べる`:set shell?`
+- `:set shell=/bin/sh`
+  - shellをshに変更する
+- Enterを押す 
+- `:shell`
+  - shellに戻る指示 
+- Enterを押して指示を決定
+- `$`が出たら成功、これで通常のシェルが使えるようになる
 
 ### シェルを確認する
 - `echo $SHELL`
@@ -146,6 +153,22 @@
   - `cd /root | cat final-flag.txt` 
 
 ## (参考)root取得後
+- dc2のスナップショットをとる
+- rootのpasswordを変更する
+  - `passwd`
+  - パスワードはdragonにする。変更したらvirtualBoxの設定に説明欄があるので忘れないようにパスワード書いておく
+  - `root:dragon` 
+- rootでsshできるようにする
+  - 本来は危険なのでrootでsshすることはできなが、ここではこれからrootでdc2をいじっていくのでsshできるようにする
+  - `nano /etc/sshd_config`
+  - この3つを変更する`PermitRootLogin yes`,`# AllowUsers tom`,`PasswordAuthentications yes`
+  - nanoの保存は、まず`ctrl+o`,Enter,`ctrl+x`
+  - 書き換えたファイルをreloadする`systemctl reload sshd`
+  - rootでsshに接続してみる
+- ParrotからのsshをIPアドレスを利用して拒否する。その1
+  - `nano /etc/hosts.deny`
+  - `sshd:ParrotのIPアドレス`
+  - 新しいターミナルを開けて、dc2にsshしてみる
 - portの7744の設定
   - /etc/ssh/sshd_config
   - Port 7744
@@ -159,7 +182,7 @@
 - このサーバを作った経緯はどこでわかる
   - cat /var/log/auth.log 
 - root,tom,jerryの過去のbashのコマンド見る
-
+- sshの接続を禁止する /etc/hosts.denyを使う
 
 
 ## rbashの作成の仕方(geminiより)
