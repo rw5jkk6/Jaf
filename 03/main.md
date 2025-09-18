@@ -128,10 +128,13 @@
 - 制限のあるrbashから通常のshのシェルになっている。ただし、`su`コマンドは使えないのでjerryにはユーザを変えれない
 
 ### 環境変数を設定する
-- 通常のコマンドが使えるようにPATHを追加する
+- 通常のコマンドが使えるようにPATHを追加する。
 - `export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin/:/usr/bin:/sbin:/bin`
 - 確認する `echo $PATH`
 - ちなみに、suコマンドは/binにあるので、これだけでもいい。またこの時点でLinpeas.shは取得できる
+
+- (補足)ここではjerryのパスワードがわかっているので、suコマンドだけが使えたらいいので、ParrotOSのターミナルでsuコマンドのPATHさえわかればいいのでPATHを調べる。
+- `which -a su`調べて`/usr/bin/su jerry`または`/bin/su jerry`でもいい
 
 ### ユーザでsshする
 - 複数の候補があった時に一番ルートが取れそうな権限の強いユーザの利用を目指す
@@ -148,7 +151,12 @@
 - GTFOBinsでgitコマンドを利用して、root権限を取得する
 - `sudo git -p help config`
 - `:`と出てきたら成功で以下を入力
-- `!/bin/sh`  
+- `!/bin/sh`
+- (補足) `git -p help config`でshでrootになれる理由
+  - このコマンドでgitのhelpをページングで見ることができる。ページングとはlessみたいに一覧表示でなく順に見れて、一番下に`:`が出てくる状態。
+  - このページングの状態では実はコマンドを打つことができる。`:`この状態で頭に`!`を打つ、例えば`!ls`とするとlsコマンドが使える。だから`!/bin/sh`とするとrootでシェルが使える
+  - この理屈はページングが使えるコマンドでは使えるはずなので、`less`,`tail`でも使える。GTFOBinsを見てみる。
+
 ### Flagを取得
   - `cd /root | cat final-flag.txt` 
 
@@ -160,7 +168,7 @@
   - `root:dragon` 
 - rootでsshできるようにする
   - 本来は危険なのでrootでsshすることはできなが、ここではこれからrootでdc2をいじっていくのでsshできるようにする
-  - `nano /etc/sshd_config`
+  - `nano /etc/ssh/sshd_config`
   - この3つを変更する`PermitRootLogin yes`,`# AllowUsers tom`,`PasswordAuthentications yes`
   - nanoの保存は、まず`ctrl+o`,Enter,`ctrl+x`
   - 書き換えたファイルをreloadする`systemctl reload sshd`
@@ -182,7 +190,6 @@
 - このサーバを作った経緯はどこでわかる
   - cat /var/log/auth.log 
 - root,tom,jerryの過去のbashのコマンド見る
-- sshの接続を禁止する /etc/hosts.denyを使う
 
 
 ## rbashの作成の仕方(geminiより)
