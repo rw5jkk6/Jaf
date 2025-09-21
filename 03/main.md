@@ -128,13 +128,11 @@
 - 制限のあるrbashから通常のshのシェルになっている。ただし、`su`コマンドは使えないのでjerryにはユーザを変えれない
 
 ### 環境変数を設定する
-- 通常のコマンドが使えるようにPATHを追加する。
+- 通常のコマンドが使えるようにPATHを追加する。ここではターゲットのサーバのPATHに何のコマンドがあるので、思いつく限りの全てのコマンドのPATHを設定する
 - `export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin/:/usr/bin:/sbin:/bin`
 - 確認する `echo $PATH`
-- ちなみに、suコマンドは/binにあるので、これだけでもいい。またこの時点でLinpeas.shは取得できる
-
-- (補足)ここではjerryのパスワードがわかっているので、suコマンドだけが使えたらいいので、ParrotOSのターミナルでsuコマンドのPATHさえわかればいいのでPATHを調べる。
-- `which -a su`調べて`/usr/bin/su jerry`または`/bin/su jerry`でもいい
+- (補足)ちなみに、suコマンドは/binにあるので、これだけでもいい。
+- (補足の補足)ここではjerryのパスワードがわかっているので、suコマンドだけが使えたらいいので、ParrotOSのターミナルでsuコマンドのPATHさえわかればいいのでPATHを調べる。`which -a su`調べて`/usr/bin/su jerry`または`/bin/su jerry`でもいいが、これはParrotのPATHの場所なのでターゲットのOSとは異なる可能性がある。実際に`/usr/bin/`にはsuコマンドはないので、結果として/binだけでいい
 
 ### ユーザでsshする
 - 複数の候補があった時に一番ルートが取れそうな権限の強いユーザの利用を目指す
