@@ -3,21 +3,32 @@
 ### ポートスキャンまで同じ
 - 22,80
 
+### 画像を調べる
+- ステガノグラフィを調べる
+
 ### robots.txtを見る
 - `curl http://$IP/robots.txt` 
 - ヒントは`/~myfiles`で、ディレクトリの初めに~がついていることがわかる
 - ~myfilesを見ても`404 error`になる  
 
+### SecListsの辞書を使うので、Parrotのどこにあるか調べる
+- SecLists-masterがどこにあるかを調べる
+  - `find / -iname "*master" 2>/dev/null`
+  - ここに出てきたパスの場所を次のコマンドで使う
+
 ### 隠しディレクトリを探す
+- ディレクトリの初めにチルダ(~)がついていると仮定して探す 
 - `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  "http://$IP/~FUZZ/"`
   - `-c`でカラー表示
   - `-z file,`は辞書の指定だが、わかりにくいので`-w`でいい
   - 初めは`--h?`をつけずに実行して関係なさそうなのを探す。ここでは404のステータスコードを返しているので`--hc 404`をつける
-- これでもいける
-  - `wfuzz -c -w /usr/share/wordlists/rockyou.txt -u http://$IP/~FUZZ/ --hc 404`
 - 見つかったファイルは`secret` `myfiles`、時間が長いので2つ見つけたら止める
 - `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
   - helpを見て`--h?`を他に行や単語数、文字数でもやってみる 
+
+- (別解)
+- `gobuster fuzz -u http://$IP/~FUZZ -w /usr/share/wordlists/dirb/common.txt -b 404`
+  - `secret` 異なる辞書を使っている 
 
 ### サイトを見る
 - 見つけたリンクでサイトを翻訳して確認する。分かったことがある
@@ -44,6 +55,8 @@
 - また隠れファイルなので頭に`.`をつける。正直、これだけのヒントでFUZZの頭にドットをつけるのに気づくのは難しいと思う
 - `wfuzz -c -z file,./custom_rockyou.txt --hc 400,404 "http://$IP/~secret/.FUZZ.txt"`
   - `--hc`statusの400,404は表示させない 
+- (別解)
+  - `gobuster fuzz -u http://$IP/~secret/.FUZZ -w /usr/share/wordlists/rockyou.txt -b 404`
 
 ### textのダウンロード
 - `curl http://$IP/~secret/.mysecret.txt > .mysecret2.txt`
@@ -64,8 +77,9 @@
 - Base58でデコード(復号)する。そして、コピーする
 - `cat > key`で貼り付ける。注意するのは、ペーストしたら改行してから、`ctrl + c`で抜ける
 ### 秘密鍵のPermissionを変更する
-- `chmod 700 key`
-- `chmod 777 key`にするとsshが繋がらない。これは秘密鍵は本来、所有者しか使うことができなので当然なので、それに合わせている
+- `chmod 400 key`
+  - rootにreadだけをつければいいので、400でいい 
+  - `chmod 777 key`にするとsshが繋がらない。これは秘密鍵は本来、所有者しか使うことができなので当然なので、それに合わせている
 
 ### パスフレーズの解析
 - (1) コマンドを使う。とても簡単これだけでもいい
@@ -80,6 +94,9 @@
   - パスフレーズの入力 
 
 ### システム内の調査
+- `id`
+  - icex64は特にグループには入っていない 
+
 - `sudo -l`
   - `(arsene) NOPASSWD: /usr/bin/python3.9 /home/arsene/heist.py`
 - icex64はパスワードなしでarseneとして/home/arsene/heist.pyファイルが実行できることがわかる。つまり実行することで、arseneになることができる
@@ -100,6 +117,10 @@
 ### 別ユーザで権限取得
 - `sudo -u arsene /usr/bin/python3.9 /home/arsene/heist.py`
   - `-u`sudoをユーザを指定して実行する 
+- `id`コマンド
+  - 特にグループには入っていない 
+
+### arseneでrootを目指す
 - arseneが使えるルートコマンドを調べる
   - `sudo -l` 
 - pipコマンドが使える。GTFOBinsのSudoの部分を参考にする。pipはPythonのモジュールをインストールできるコマンド。なので、架空のモジュールを作ってpipを利用する
@@ -114,6 +135,7 @@
 
 ### ルートフラグの取得
 - ルートシェルを奪取できた
+- `id` uid=0(root) gid=0(root) groups=0(root)
 - `cd /root`
 - `cat root.txt`
 
