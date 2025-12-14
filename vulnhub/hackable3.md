@@ -1,3 +1,5 @@
+- はじめにスナップショットをとる
+- knockコマンドを落とす
 ### 論点
 - 特になし
 
@@ -5,7 +7,10 @@
 - port knocking,brainfuck,steghide,lxd
 
 ### 攻略
-- ポートスキャンしたら22,80だが、22はfilteredになっている
+- nmapをする
+  - ポートスキャンしたら22,80だが、22はfilteredになっている
+  - sqlinjectionができるかもと書いてある
+  - /login_page, /login.php, /backup/,~などあるのがわかる
 - コメントを見る
   - ユーザ名がある 
 - gobuster
