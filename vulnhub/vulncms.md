@@ -1,0 +1,21 @@
+### 論点
+- cmsの設定ファイル
+## 攻略
+- nmapするとcmsが3つあるのがわかる
+- drupalに対してはdrupal_geddon2をやってみる
+- 対話型シェルにする
+- システム内を探索する
+- ユーザ名をリストにする
+- CMSに入ったらまずするのは、各設定ファイルをチェックする。ユーザ名とパスワードを取得
+  - wordpress `/var/html/wordpress/public_html/wp-config.php`
+  - drupal `/var/html/drupal/sites/defaults/settings.php`
+  - joomla `/var/html/joomla/configuration.php`
+- wordpress,drupalのmysqlは何もない
+- joomlaのMySQLをチェックする
+  - `show databases;`
+  - `use joomla_db;`
+  - `show tables;`
+  - `select * from hs23w_users;` 
+  - mailがパスワードになっているのでチェックする
+- userとpasswordを使って、hydraをする
+- sshでログインする
