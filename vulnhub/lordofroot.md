@@ -1,0 +1,41 @@
+### 論点
+- SQLインジェクションの試すコード
+### keyword
+- 自作サイト,portノッキング,sqlmap -r,pkexec,burpsuite
+
+### 攻略
+- nmapする
+  - 22のみ
+- 適当にsshすると1,2,3でポートノックの情報が出る
+  - `ssh admin@$IP`
+  - `knock -v $IP 1 2 3`
+  - もう一度nmapすると1337portがopenする
+  - portノックはsshだけではないwebサイトも対象 
+- gobuster
+  - `gobuster dir -u http://$IP:1337/ -w $dirsmall`
+  - 特に重要そうなのがでてこない。もう一度、拡張子を追加してする
+  - `gobuster dir -u http://$IP:1337/ -w $dirsmall -x php,html`
+  - 404.htmlが答え
+- サイトのコメントを見る、base64を2回するとログインするサイトのurlが出てくる
+  - ユーザとパスワードがあるのでcookieをチェックしておく
+  - 今までユーザ名やパスワードなど一切で来なかったので、ログイン画面でユーザ名とパスワードが出てきたら基本的にSQLmapを試してみる
+- (補足) PostのSQLMap
+  - 今まではハッキングラボ9でやったsqlmapのはgetリクエストでやったが今回はPostでやる。
+- SQLMapをPostでやる  
+  - burpsuiteのブラウザで、もう一度見てみる
+    - (注意)過去に使ったlogin.reqはcookieの関係で使えないので、新しく作らないとダメ
+  - user,passwordを適当に入力して、Intercept onにしてLoginボタンを押す。リクエストヘッダをコピーしてlogin.reqで保存する
+  - `sqlmap -r login.req --dbs --batch`これで探していく
+  - `sqlmap -r login.req -D Webapp --tables --batch`
+  - `sqlmap -r login.req -D Webapp -T Users --columns --batch`
+  - `sqlmap -r login.req -D Webapp -T Users -C username,password --dump
+  - ユーザ名とパスワードがわかるが時間がかかるので、下のが答え
+- ssh
+  - 一人づつsshできるか試してみる   
+  - smeagol:MyPreciousR00t
+- システム内探索ランキングでやってみる
+- SUID
+  - pkexec
+  - /SECRET/~という謎のがある
+- ps aux | grep root
+  - cron,apache2はだいたい、いつもと同じのが動いている  
