@@ -44,11 +44,18 @@
   - `ps aux | grep root`
   - `ss -lntp`
   - `find / -type f -user jubiscleudo 2>/dev/null`
-    - ユーザの所有者を探す 
+    - ユーザの所有者を探す
+  - `find / -iname "*backup*" -type f 2>/dev/null`  
 - jubiscleudoのシステム内を探索してユーザを切り替える 
-- hackable_3に切り替えr
+- hackable_3に切り替える
 - `id`コマンドでlxdであることがわかる
 - lxcを使ってrootになる
+
+```
+git clone  https://github.com/saghul/lxd-alpine-builder.git
+cd lxd-alpine-builder
+./build-alpine
+```
 - (補足)
   - pkexecもあるが、gccがないので失敗する 
 
