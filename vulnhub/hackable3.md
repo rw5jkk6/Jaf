@@ -8,44 +8,44 @@
 
 ## 攻略
 - nmapをする
-  - nmapは`-T 4`をつけると高速になる
+  - nmapは`-T 4`をつけると高速になる。試すとわかるが、全portスキャンならだいたい7秒ぐらい早い
   - ポートスキャンしたら22,80だが、22はfilteredになっている
   - 次のは出る時もあれば出ない時もある気がする
     - sqlinjectionができるかもと書いてある
-    - /login_page, /login.php, /backup/,~などあるのがわかる
+    - /backup/,~などあるのがわかる。/login_page, /login.php, この2つはnmapでしか出てこないので覚えておく
 
-- サイトのview page sourceを見る 
+- サイトをチェックする
+  - view page sourceを見る 
   - コメントを見るとユーザ名がある
   - 画面を見ると写真しかないのに、sourceの中に他のリンクへのサイトがある。login.phpは本来見えてはいけないのだが見えている、その中に3.jpgという意味深なのがある。とりあえずアクセスしてダウンロードしておく
-- gobuster
-  - backup
+- `gobuster -u $IP -w $dirsmall -x php,txt`
+  - デフォルトで-xはつける。サイトを順に見ていく
+  - login.phpのマークダウンには3.jpgがあるのでダウンロードしておく
+  - backupからはwordlist.txtをダウンロードしておく　`wget http://$IP/backup/wordlist.txt`
   - imagens
-  - robots.txt
-  - config ->1
-  - css ->2
-- /backupにwordlist.txtがあるのでダウンロードする
-  - `wget http://$IP/backup/wordlist.txt` 
-- (他の方法で見つける)gobusterを工夫する
-  - php拡張子をつける 
-  - login.phpが見つかる
-  - 白紙だが、マークダウンを見るとコードが書いてある
-  - 3.jpgが見つかる
-  - 画像をダウンロードして分析する
+  - robots.txtには/configと記載がある
+  - configには1.txtがある。これはbase64
+  - cssには2.txtがある。これはbrainfuck 
 - 3.jpgを分析する
   - `steghide extract -sf 3.jpg` 
 - ポートノッキング
 - `knock -v $IP 10000 4444 65535`
   - nmapを一回づつ-pで指定する方法ではできない
-  - `-r`は本来はランダム 
+   
 - ユーザ名、ssh,wordlist.txtが揃えばhydra
   - `hydra -l ~ -P ~ ssh://$IP`
   - jubiscleudo:onlymy
-- jubiscleudoで3種の神器をする
+- jubiscleudoでシステム内探索ランキングを使う
   - id -> 特にない
-  - SUID -> pkexecがある。/usr/bin/pkexecのバージョンを調べる。0.105OK。gccが使えるか調べるがない 
-  - sudo -l -> ない
-- jubiscleudoのシステム内を探索してユーザを切り替える
-  - システム内探索ランキングを使う 
+  - SUID -> pkexecがある。/usr/bin/pkexecのバージョンを調べる。0.105OK。gccが使えるか調べるがない
+    - PwnKitは使えるのでrootになれる 
+  - `sudo -l` -> ない
+  - `getcap -r / 2>/dev/null`
+  - `ps aux | grep root`
+  - `ss -lntp`
+  - `find / -type f -user jubiscleudo 2>/dev/null`
+    - ユーザの所有者を探す 
+- jubiscleudoのシステム内を探索してユーザを切り替える 
 - hackable_3に切り替えr
 - `id`コマンドでlxdであることがわかる
 - lxcを使ってrootになる
