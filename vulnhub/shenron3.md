@@ -34,6 +34,9 @@
   - これでもできない場合は、php-reverse-shellが間違っているので新しいのをとってくる。
   - (追記1)pluginでもできる。下に書いてある
   - (追記2)msfconsoleの`search wp_admi upload`でもできる。注意はusernameはshenronでなく、admin。pluginができるのでできる/var/www/html/wp-content/plugins/ランダム名
+- 対話型シェルにする
+  - www-dataになる。なぜwww-dataになるかというと、`/var/www/html/wp-content/themes/twentyeleven/archive.php`をreverse-shellに書き換えたが、このファイルの所有者はwww-dataである。つまり実行されたファイルの所有者になる 
+
 - ユーザを調べる
   - shenronがいる 
 - 設定ファイルを見る
