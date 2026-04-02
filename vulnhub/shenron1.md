@@ -1,6 +1,6 @@
 ### 論点
 - joomlaのtemplateにreverse-shellする
-- authorized_keyへの書き込み
+- authorized_keysへの書き込み
 ### keyword
 - joomla,sudo(cp,apt)
 
@@ -26,6 +26,9 @@
   - php-reverse-shellを貼り付けて左上にある緑色のsaveする
   - Parrotでncコマンドで待ち受ける
   - template_previewボタンを押す
+  - (補足)rlwrapで待受すると何が違う
+    - `rlwrap nc -nlvp 9001`
+    - 対話型シェルにしてもコマンド履歴が使えるので、こっちを使う
 - 対話型シェルをする
 - ユーザが誰がいるか調べる
   - `ls -l /home` 
@@ -35,13 +38,14 @@
   - 特になし
 - `sudo -l`
   - `/usr/bin/cp`があるのがわかる
-- とりあえず次はshenronユーザを目指す
+  - jennyが公開鍵と秘密鍵を作って、公開鍵をshenronにコピーするのを試みる
+- とりあえず次はshenronユーザを目指す。shenronのホームを見てみようとするが、権限不足でダメ
 - shenronユーザに公開鍵を置いて、sshをする
-  - ファイル名はデフォルトでパスワードは好きなのにする
+  - ファイル名はデフォルトでパスワードは好きなのにする。別に空でもいい
   - `ssh-keygen`
   - とりあえずjennyの隠しファイルにid_rsa.pubができたのを確認する
   - `cd /home/jenny/.ssh`
-  - shenron権限でid_rsa.pubをshenronのauthorized_keysにおく。ちなみに`/authorized_keys/`とするとダメ
+  - shenron権限でid_rsa.pubをshenronのauthorized_keysに書き込む。ちなみに`/authorized_keys/`とするとダメ。authorized_keysはファイルなので
   - `sudo -u shenron /usr/bin/cp id_rsa.pub /home/shenron/.ssh/authorized_keys`
 
 - これでshenronに公開鍵を置けたのでjennyでsshする
@@ -56,3 +60,14 @@
   -  `sudo /usr/bin/apt update -o APT::Update::Pre-Invoke::=/bin/sh`
    
      
+## 参考
+### 公開鍵認証
+- 初めに自分のところで?コマンドで?と?を作る。これはデフォルトで?フォルダに作られる。次に?をターゲットのユーザの/home/ユーザ名/?/?に書き込む
+
+### cpコマンド
+  - `cp 指定のファイル名 コピー先のファイル名(好きな名前をつけられる)`
+- (練習)userの持っているid_rsa.pubを/tmp/.ssh/authorized_keysにコピーする練習をする
+  - とりあえずcpコマンドではフォルダは作られないので作る
+    - `mkdir /tmp/.ssh`
+  - コピーする
+    - `cp id_rsa.pub /tmp/.ssh/authorized_keys`    
