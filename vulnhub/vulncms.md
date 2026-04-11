@@ -29,25 +29,31 @@ set rhosts
 set lhost
 set rport
 ```
-
-- 対話型シェルにする
+- (Meterpreter)になるので`shell`にする
+- 対話型シェルにする 
 - システム内を探索する
 - id
   - `www-data`しかない 
 - `ps aux`を見ても何もない
 - ls /home
-  - userが3人
+  - elliot,ghost,tyrellのユーザが3人
 - cmsなので各cmsの設定ファイルを調べる。詳しくは下に書いてある。わからなければ、AIに聞く
+- `ps aux | grep -v root`
+  - phpでリバースシェルが行われているようだが、4444ポートで待ち受けても何も起こらない  
 - suid
   - pkexec,lxcくらい
 - `find / -user www-data -type f 2>/dev/null`
   - /var/log/nginx/access.log,error.logがある
-- `find / -iname "*pass*" -type f 2>/dev/null`
-
+- ファイルにpasswordとあるのを探す
+  - `find / -iname "*pass*" -type f 2>/dev/null`
+  - これでは多くのファイルが出てくる、だいたい/var/www/html/~以下が怪しいが多いので、さらに絞る方法を考える
+  - `find / -iname "*pass*" -type f 2>/dev/null | grep -E "tyrell|ghost|elliot"`
+  - `/var/www/html/drupal/misc/tyrell.pass`が見つかるのでコピーしてメモに貼っておく
 - suコマンドで切り替え
+  - さっきのメモを使う 
 - suid
   - pkexecもgccもあるのでできそうだと思ったが、vi,vim,nanoがないので書き込みできない
-  - PwnKitをParrotからダウンロードする
+  - PwnKitをParrotからダウンロードする。PwnKitはできる
 - sudo -l
 
 ```
