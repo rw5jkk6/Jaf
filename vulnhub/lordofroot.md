@@ -42,6 +42,9 @@
 - 他のユーザを探す
   - `ls -l /home`
   - smeagolしかいない 
+- `uname -a`
+  - 32bitパソコンであることがわかる 
+- `find / -user smeagol -type f 2>/dev/null`特に何もない
 - `sudo -l` 使えない
 - `ps aux | grep root`
   - cron,apache2はだいたい、いつもと同じのが動いている。そしてsqlインジェクションしたぐらいなのでsqlが動いている。
@@ -49,9 +52,10 @@
 - `ss -lntp`
   - 動いているポートを探す。プロセスで動いているのはポートにも大体あるので、ここでも特に珍しいのはない 
 - SUID
-  - pkexec.shは追記2を使う
-  - PwnKithは使えない
+  - pkexec.sh(シェルスクリプト)は32bitなので使える。追記2を使う
+  - PwnKit(バイナリコード)は64bitなので使えない
 - root取得後
+  - `#`になるので`bash -i`をすると、新しいプロセスでシェルを起動できる
   - ポートノッキングのファイルをチェックする
     - `cat /etc/knockd.conf` 
   - /SECRET/~という謎のがある
