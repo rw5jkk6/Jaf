@@ -11,7 +11,8 @@
     - 80,443
   - close
     - 22 sshなのでport knockingか?
-    - 7070,8084
+    - 7070(realserver),8084(vantronix-mgmt)
+    - realserver,vantronix-mgmtを調べたがよくわからん
 - サイトを見る
   - 80,443ポートは同じApacheのデフォルトページ。
   - ソースの一番下に暗号あるのでメモっておく
@@ -77,7 +78,7 @@
 - `sudo /bin/bash -i` 
 
 ## 参考
-- knocking portができるか、knock.confを見るがない。そもそもsshの設定ファイルが削除されているのでcloseになっている
+- port knockingができるか、knock.confを見るがない。ssh.bakというバックアップファイルがあって、そもそもsshの設定ファイルが削除されているのでcloseになっている
 
 - domain nameの設定
   - /etc/apache2/sites-available/subrion.conf
@@ -85,6 +86,12 @@
   DocumentRoot /var/www/html/subrion
   ServerName  venom.box
   ``` 
+
+- 80,443ポートが同じApacheのデフォルトページであるのを調べる
+  - `/etc/apache2/sites-available/000-default.conf`
+    - 80番ポートは/var/www/html  
+  - `/etc/apache2/sites-available/default-ssl.conf`¥
+    - 443番ポートは/var/www/html  
 
 - /etc/vsftpd.conf
   - 各ユーザのもとにftpフォルダがある 
