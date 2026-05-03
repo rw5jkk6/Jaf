@@ -27,7 +27,8 @@
   - 設定は次のようにする
     - Decodeにする
     - standard vigenere cipher
-    - key:hostiger 
+    - key:hostiger
+    - Passwordは`E7r9t8@Q#h%Hy+M1234`
   - try on `venom.box`と書いてある。これはドメインネームっぽい
 - ドメインネームを書き換える
   - `sudo vim /etc/hosts`
