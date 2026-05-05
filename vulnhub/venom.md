@@ -44,8 +44,8 @@
   - `/login/`こっちは一般ユーザのログインであることがわかる
   - `/panel/`こっちはadminのログインなので、こっちを使う
   - 他にも色々わかるが決定的なのはなさそう 
-- ここから侵入するには２通りの方法がある。
-  - (1)adminでsubmarinにログインしてphp-reverse-shellを書き込んでリバースシェル。wordpressのテンプレートに書き込んだりしたのと基本的におなじ
+- ここから侵入するには3通りの方法がある。
+  - (1)adminでsubrionにログインしてphp-reverse-shellを書き込んでリバースシェル。wordpressのテンプレートに書き込んだりしたのと基本的におなじ
   - (2)exploitdbを使う
   - (3)msfconsoleを使う
   - ここでは(1)を使う。(2)(3)は追記する
@@ -54,7 +54,7 @@
   - ダッシュボードにログインする
   - 左にあるAdd Page -> Uploads
   - Parrotのターミナルに`php-reverse-shell.php`を置いて、uploadするが、名前が長いので短くして、拡張子の名前も変える`rev.phar` ちなみに.pharの拡張子はphpのアーカイブファイルって意味
-  - フロッピーディスクのアイコンから`rev.phar`をuploadに貼り付ける
+  - フロッピーディスクのアイコンから`rev.phar`をuploadに貼り付ける。拡張子はいろいろ試すが、`.phar`しか使えないようだ。
   - Parrotで待ち受ける`nc -nlvp 9001`
   - subrionのgithubを見ることで、今のファイルをどこにuploadされているか調べる。すると、そのまま`/uploads/`があるので、それを使う
   - `http://venom.box/uploads/rev.phar`にアクセスすると侵入できる
@@ -67,14 +67,22 @@
 - (3)(追記) msfconsoleを使う
   - `msfconsole -q`で`search subrion`でいつもみたいに使う
 - 対話型シェルにする
+- `ls -l /home`を見ると、ユーザはhostinger,nathanのみ
 - `su hostinger`で切り替える。パスワードもhostinger
-- `id`はhostingerのみ
-- `ls -l /home`を見ると、ユーザは2人
+- `id`
+  - hostingerのみ
+- closeしていたポートが開いていないか探す
+  - `ss -lntp`
+  - 22,7070,8084は開いていない 
+- /optを見る
+  - `ls -la /opt`にVBoxGuest~なるものがあるが、特に使えそうにない 
 - SUID
   - findはpermission deniedになる 
-- .bash_historyを見る。catで怪しいファイルを見ているが、そこにパスワードがある
+- .bash_historyを見る。catで怪しいファイルを見てみる
+  - `/var/www/html/subrion/backup/.htaccess`そこにパスワードがある
 - su nathan
-- `id` sudoがある`sudo bash -i`これでrootになれる
+- `id`
+  - sudoがある`sudo bash -i`これでrootになれる
 - SUID
   - find,pkexecがある
   - これでrootになる`find . -exec /bin/sh -p \; -quit` 
@@ -84,6 +92,14 @@
 - `sudo /bin/bash -i` 
 
 ## 参考
+- /homeの階層構造
+```
+/home---hostinger---.bash-history
+      |-nathan    |-.bashrc
+                  |-.ssh(ここにはない)
+```
+
+
 - port knockingができるか、knock.confを見るがない。ssh.bakというバックアップファイルがあって、そもそもsshの設定ファイルが削除されているのでcloseになっている
 
 - domain nameの設定
