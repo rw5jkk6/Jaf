@@ -1,5 +1,3 @@
-- はじめにスナップショットをとる
-- knockコマンドを落とす
 ### 論点
 - 特になし
 
@@ -10,23 +8,28 @@
 - nmapをする
   - nmapは`-T 4`をつけると高速になる。試すとわかるが、全portスキャンならだいたい7秒ぐらい早い
   - ポートスキャンしたら22,80だが、22はfilteredになっている
-  - 次のは出る時もあれば出ない時もある気がする
-    - sqlinjectionができるかもと書いてある
-    - /backup/,~などあるのがわかる。/login_page, /login.php, この2つはnmapでしか出てこないので覚えておく
+- 詳しくnmapする
+  - `sudo nmap -p22,80 -script vuln $IP | tee nmap-vuln.log`
+  - sqlinjectionができるかもと書いてある
+  - /backup/,~などあるのがわかる。/login_page, /login.php, この2つはnmapでしか出てこないので覚えておく
+
+
 
 - サイトをチェックする
   - view page sourceを見る 
-  - コメントを見るとユーザ名がある
-  - 画面を見ると写真しかないのに、sourceの中に他のリンクへのサイトがある。login.phpは本来見えてはいけないのだが見えている、その中に3.jpgという意味深なのがある。とりあえずアクセスしてダウンロードしておく
+  - コメントを翻訳するとユーザ名が`jubiscleudo`でport knockingがあること、jpgファイルが関係していることがわかる。
+  
 - `gobuster -u $IP -w $dirsmall -x php,txt`
   - デフォルトで-xはつける。サイトを順に見ていく
-  - login.phpのマークダウンには3.jpgがあるのでダウンロードしておく
   - backupからはwordlist.txtをダウンロードしておく　`wget http://$IP/backup/wordlist.txt`
   - imagens
   - robots.txtには/configと記載がある
   - configには1.txtがある。これはbase64
   - cssには2.txtがある。これはbrainfuck 
-- 3.jpgを分析する
+
+- nmapで見つけたlogin.phpにアクセスする
+  - 画面を見ると写真しかないのに、sourceの中に他のリンクへのサイトがある。login.phpは本来見えてはいけないのだが見えている、その中に3.jpgという意味深なのがある。とりあえずアクセスしてダウンロードしておく
+  - 3.jpgを分析する
   - `steghide extract -sf 3.jpg` 
 - ポートノッキング
 - `knock -v $IP 10000 4444 65535`
@@ -50,16 +53,30 @@
 - hackable_3に切り替える
 - `id`コマンドでlxdであることがわかる
 - lxcを使ってrootになる
-
+  - lxdをダウンロードする
 ```
+cd ~/tools/
 git clone  https://github.com/saghul/lxd-alpine-builder.git
 cd lxd-alpine-builder
-./build-alpine
 ```
-- (補足)
-  - pkexecもあるが、gccがないので失敗する 
+  - Parrotで簡易サーバを立ち上げる
+  - targetサーバでwgetで取得する
+  - toolsにある、root-txt.txtを順にする
+- rootになる 
 
 
-## rootになってから
-- port knockingのファイル見る
+## 補足 
+- pkexecもあるが、gccがないので失敗する
+- lxcコマンドの説明
+  - コンテナとイメージを削除する 
+```
+lxc stop myContainer
+lxc delete myContainer
+
+lxc image delete myImage
+```
+
+
+- rootになってから
+  - port knockingのファイル見る
   - /mnt/root/etc/knockd.conf 
