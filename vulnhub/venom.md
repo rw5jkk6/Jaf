@@ -65,6 +65,7 @@
   - `$`が出る。対話型シェルにしようとしても失敗する。`id`を見るとwww-dataであることがわかる。
   - `$`のところでreverse-shellをする。pythonのでしかできない
 - (3)(追記) msfconsoleを使う
+  - runしてから、けっこう時間かかる 
 
 ```
 msfconsole -q
