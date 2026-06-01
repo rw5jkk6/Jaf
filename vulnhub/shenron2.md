@@ -13,8 +13,8 @@
   - もしエラーでたらNATにしてupdateする
   - `wpscan --url http://shenron:8080 -e ap`
 - 見つかった脆弱性を検索する
-  - `wordpress plugin site editor local file inclusion`
-  - 見つかったパスをコピーする
+  - 検索で`exploitdb wordpress plugin site editor local file inclusion`
+  - Proof of Concept と書いてある下にリンクあるのでパスをコピーする
 - LFI
   - ブラウザに次の貼り付ける
   - `http://~:8080/wp-content/plugins/site-editor/~=/etc/passwd` コピーをペーストする     
@@ -29,10 +29,10 @@
 - `sudo -l`はなし
 - SUID
   - `/usr/bin/Execute`という気になるのがある。pkexecもある
-  - 
-  - なんかよくわからんが、このコマンドを実行してみる`/usr/bin/Execute`   
+  - `cat /usr/bin/Execute` これを見ると/mnt/bashというコマンドを作っている。chmod u+s というのが見えて、chownがshenronと書いてあるから、実行するとshenronになるようだ
+  - このコマンドを実行してみる`/usr/bin/Execute`   
 - もう一回SUID
-  - `/mnt/bash`という謎のコマンドが増えている
+  - `/mnt/bash`という、さっき見たコマンドが増えている
   - `/mnt/bash -p`を実行する
 - ユーザの確認
   - `id` euidにshenronというのが増えている
