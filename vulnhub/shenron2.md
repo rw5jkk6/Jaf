@@ -1,5 +1,6 @@
 ### 論点
 - wordpressのpluginの脆弱性
+- (追記)プログラマの不注意で/etc/passwdが見えて、sshできるという意味でpotatoに似ている
 
 ### keyword
 - LFI,exploitdb,hydra
@@ -14,7 +15,7 @@
   - `wpscan --url http://shenron:8080 -e ap`
 - 見つかった脆弱性を検索する
   - 検索で`exploitdb wordpress plugin site editor local file inclusion`
-  - Proof of Concept と書いてある下にリンクあるのでパスをコピーする
+  - exploitdbのサイトをGeminiかなんかで翻訳して何が書いてあるか理解して,`Proof of Concept`と書いてある下にリンクあるのでパスをコピーする
 - LFI
   - ブラウザに次の貼り付ける
   - `http://~:8080/wp-content/plugins/site-editor/~=/etc/passwd` コピーをペーストする     
