@@ -35,8 +35,9 @@
 - もう一回SUID
   - `/mnt/bash`という、さっき見たコマンドが増えている
   - `/mnt/bash -p`を実行する
+    - `-p`をつけるのはjennyからshenronに切り替えるため。-pをつけると、その/mnt/bashファイルの所有者であるshenronになれる。 
 - ユーザの確認
-  - `id` euidにshenronというのが増えている
+  - `id` euidにshenronというのが増えている。ただしuidはjennyのままなのはログインした時のユーザがjennyだから。ただし、今の実際のユーザはshenron
   - `whoami` これが実際のユーザ
 - `sudo -l`
   - passwordはjennyだが 
