@@ -1,0 +1,19 @@
+- ドメインネームを設定する
+  - `sudo vim /etc/hosts` 
+- 脆弱性を探す
+  - wpscanでpluginやテーマに脆弱性がないかを調べる。脆弱性があれば、ここで侵入することができる
+  - `wpscan -u http://ドメインネーム -e ap`またはmsfconsoleの`auziliary/scanner/http/wordpress_scanner`
+- ダッシュボードのユーザを探す
+  - サイトのどこかに書いてある。なければwpscanで探す
+  - `wpscan -u http://ドメインネーム -e u` 
+- ダッシュボードのユーザのパスワードを探す
+  - サイトのどこかに書いてある。なければwpsanのbrute forceで探す。パスワードの辞書も見当たらなければ、rockyou.txtを使う
+  - `wpscan -u http://ドメインネーム -U ユーザ名 -P パスワードファイル` 
+- sshしてみる
+  - ダッシュボードのパスワードとsshのパスワードを使いまわしているかもしれない 
+- ダッシュボードにログインする
+  - adminでログインしたらmsfconsoleのwp_adminを使うか、pluginをuploadしてreverse-shellをする 
+- 侵入したら
+  - config.phpを見て、SQLのユーザをパスワードを見る。このパスワードがsshでそのまま使えることがある。使えなければ、SQLに接続してユーザ名とパスワードを探す 
+- 正規のユーザになる
+  - 以降は、いつもと同じシステム内探索ランキングなどを利用する 
