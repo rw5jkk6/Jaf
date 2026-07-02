@@ -1,3 +1,4 @@
+- (前提)wordpressの侵入までのチートシートであるが、他の方法(他のポートなど)で侵入することができることもある
 - ドメインネームを設定する
   - `sudo vim /etc/hosts` 
 - 脆弱性を探す
@@ -5,9 +6,14 @@
   - `wpscan -u http://ドメインネーム -e ap`またはmsfconsoleの`auziliary/scanner/http/wordpress_scanner`
 - ダッシュボードのユーザを探す
   - サイトのどこかに書いてある。なければwpscanで探す
-  - `wpscan -u http://ドメインネーム -e u` 
+  - `wpscan -u http://ドメインネーム -e u`
+  - ユーザがわかれば、ここでhydraのrockyou.txtを使って、sshすることもできる
 - ダッシュボードのユーザのパスワードを探す
-  - サイトのどこかに書いてある。なければwpsanのbrute forceで探す。パスワードの辞書も見当たらなければ、rockyou.txtを使う
+  - passwordまたはpassword辞書を探す
+    - サイトのどこかに書いてある可能性がある。
+    - cewlで辞書を作ることもある
+    - ディレクトリリスティングで辞書をダウンロードできるかもしれない
+    - なければrockyou.txtを使う
   - `wpscan -u http://ドメインネーム -U ユーザ名 -P パスワードファイル` 
 - sshしてみる
   - ダッシュボードのパスワードとsshのパスワードを使いまわしているかもしれない 
