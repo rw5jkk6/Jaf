@@ -17,6 +17,9 @@
 
 - 53portを調べる
   - `dig @$IP greenoptic.vm axfr`
+    - @$IPはドメインサーバのアドレス、ここに聞きに行く
+    - greenoptic.vmは解決したいドメインネーム
+    - axfrをつけることで、ドメインネームに属するサブドメイン全てを教えてくれる
   - domain nameとsub domain nameがあるので/etc/hostsに書き込む
 ```
 greenoptic.vm
@@ -26,6 +29,7 @@ websrv01.greenoptic.vm
 
 - webサイトを見る
   - どうやらサイトが攻撃を受けたよう
+
 - gobuster
   - `account`という気になるのがある
 - accountにアクセスすると怪しいURLがあるので、ディレクトリとラバーサルを試す
@@ -46,8 +50,12 @@ websrv01.greenoptic.vm
 - recoveryplan.greenoptic.vmにアクセスする
   - Basic認証してから、いろいろ探すと`dpi.zip`があるのでダウンロードしておく。文章を読んでいると、samに対してメールにパスワード書いておくと書いてある。
 - メールを探す
+  - メールはubuntuでデフォルトで/var/mail/ユーザ名にある
   - `include=../../../../../../var/mail/sam`
 - dpi.zipを解凍
+  - 解凍すると、pcapファイルが出てくるので、wiresharkで起動する
+  - `wireshark dip.pcap`
+  - 検索でftpを入力する。どこでもいいので右クリックしてtraceroute->tcp streamを選択する。ユーザ名とパスワードがわかる
   - alex:FwejAASD1というのがわかる 　 
 - sshで侵入
   - `ssh alex@IP`
