@@ -11,12 +11,15 @@
 - nmap
   - 22,80
 - webサイトを見るが適当に入力するが送信がpostなのでBurpSuiteを起動する
-  - 適当に入力してburpsuiteでResponseのデータ部分を見たら、エラーが出てるがよくわからんから、`"WARNIG: Assuming ~`の部分からコピーして検索してみる
+  - Proxyからintercept offにしてopen browserにする
+  - ブラウザで適当に入力してconvertを押す
+  - burpsuiteでProxyにある、HTTP historyのResponseのボディ部分を見たら、エラーが出てるがよくわからんから、`"WARNIG: Assuming ~`の部分からコピーして検索してみる。使っているプログラムのライブラリに脆弱性があれば、これを利用して侵入できるかもしれない
   - `github.com/ytdl-org/youtube-dl`のサイトを見るとオプションが使えることがわかる
 - osコマンドインジェクションができるかを確認する
-  - Requestのところで右クリックして`send to repeater`を送る
-  - postのボディ部分のyt_url=のところに`` --exec%3c`ls${IFS}-la` ``を入力するとレスポンスにコマンドの結果が返ってくる
-    - `${IFS}`はbashでのスペースのこと
+  - Requestのところで右クリックして`send to repeater`を押すとProxyの2つ右にRepeaterの色が変わるので押す
+  - RepeaterはBurpからボディ部分だけを書き換えて、ターゲットにSendボタンを押すことで連続でデータを送信することができる
+  - postのボディ部分のyt_url=のところに`` --exec%3c`ls${IFS}-la` ``を入力するとResponseにコマンドの結果であるディレクトリの一覧がパーミッションと一緒に返ってくる
+    - `${IFS}`はbashでのスペース、`%3c`はURLエンコーダのスペース
     - ここではバッククォートが使われているが、シングルやダブルクォートの違いはシングルなどは文字列に対して、バッククォートはコマンドを一つの塊にしたもの
 - reverse-shellで侵入
   - ここでreverse-shellのファイルを置いて、reverse-shellをする。普段なら、リバースシェルのコードを実行させるが、なぜかできないので、リバースシェルを書いたファイルをuploadして、そのファイルをもう一度実行させる
