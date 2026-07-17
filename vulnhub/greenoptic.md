@@ -15,18 +15,6 @@
   - 21,22,53,80,10000
   - 53番ポートはDNSのためのポート
 
-- 53portを調べる
-  - `dig @$IP greenoptic.vm axfr`
-    - @$IPはドメインサーバのアドレス、ここに聞きに行く
-    - greenoptic.vmは解決したいドメインネーム
-    - axfrをつけることで、ドメインネームに属するサブドメイン全てを教えてくれる
-  - domain nameとsub domain nameがあるので/etc/hostsに書き込む
-```
-greenoptic.vm
-recoveryplan.greenoptic.vm
-websrv01.greenoptic.vm
-```
-
 - webサイトを見る
   - どうやらサイトが攻撃を受けたよう
 
@@ -35,6 +23,21 @@ websrv01.greenoptic.vm
 - accountにアクセスすると怪しいURLがあるので、ディレクトリとラバーサルを試す
   - include=../../../../../../etc/passwd
   - view sourcecodeを見ると中身が見える 
+- ここまで来て、行き詰まる。他のポートを試してみる
+  - ftpはユーザ名、パスワードがわからない
+  - 10000番ポートをみるとドメインネームを設定すると書いてある。ドメインネームは53番ポートのDNSが関連しているので、53を調べる 
+
+- 53portを調べる
+  - `dig @$IP greenoptic.vm axfr`
+    - @$IPはドメインサーバのアドレス、ここに聞きに行く
+    - greenoptic.vmは解決したいドメインネーム
+    - axfrをつけることで、ドメインネームに属するサブドメイン全てを教えてくれる
+  - domain nameとsub domain nameがあるので/etc/hostsに書き込む
+
+```
+192.168.56.? greenoptic.vm recoveryplan.greenoptic.vm websrv01.greenoptic.vm
+```
+
 
 
 - recoveryplanを見る
@@ -45,15 +48,19 @@ websrv01.greenoptic.vm
   - `staff:$apr1$YQ~`
   - コピーして`staff-hash.txt`とでもしておく
 - john the ripper
+  - `sudo john --wordlist=/usr/share/wordlist/rockyou.txt staff-hash.txt`
   - ハッシュ値からパスワードがわかる
   - staff:wheeler
 - recoveryplan.greenoptic.vmにアクセスする
   - Basic認証してから、いろいろ探すと`dpi.zip`があるのでダウンロードしておく。文章を読んでいると、samに対してメールにパスワード書いておくと書いてある。
 - メールを探す
-  - メールはubuntuでデフォルトで/var/mail/ユーザ名にある
+  - メールはubuntuでデフォルトで/var/mail/ユーザ名にある。
   - `include=../../../../../../var/mail/sam`
+  - terryからsamにメールがあって、そこにパスワードが書いてある
+  - (追記)昔のubuntuでは`/var/spool/mail/~`もあるが、昔の名残で今はあまり使われておらずシンボリックになっている。ちなみに、こっちでもメールは見れる
 - dpi.zipを解凍
-  - 解凍すると、pcapファイルが出てくるので、wiresharkで起動する
+  - `unzip dpi.zip`するpasswordは`HelloSunshine123`
+  - 解凍すると、pcapファイルが出てくるので、wiresharkで起動する。
   - `wireshark dip.pcap`
   - 検索でftpを入力する。どこでもいいので右クリックしてtraceroute->tcp streamを選択する。ユーザ名とパスワードがわかる
   - alex:FwejAASD1というのがわかる 　 
