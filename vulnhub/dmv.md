@@ -44,3 +44,8 @@
   - `nc -nlvp 8888`
 - rootになる
   - しばらく待つとrootになる  
+
+## Question
+- `@{IFS}`はリクエストでなぜ使った
+- echoでシングルクォートとバッククォートの違いは
+- BurpのRepeaterはどんな機能
