@@ -62,7 +62,7 @@
   - `unzip dpi.zip`するpasswordは`HelloSunshine123`
   - 解凍すると、pcapファイルが出てくるので、wiresharkで起動する。
   - `wireshark dip.pcap`
-  - 検索でftpを入力する。どこでもいいので右クリックしてtraceroute->tcp streamを選択する。ユーザ名とパスワードがわかる
+  - 検索でftpを入力すると、Protocolのところがftpになって、画面の真ん中の上の方で右クリックして`追跡`->`tcp stream`を選択する。ユーザ名とパスワードがわかる
   - alex:FwejAASD1というのがわかる 　 
 - sshで侵入
   - `ssh alex@IP`
@@ -80,3 +80,12 @@
 - rootになる
   - `su root`
   - passwordはAS~   
+
+## Question
+- digコマンドは何
+- 侵入後にidコマンドするのはなぜ
+- wiresharkは何するもの
+- TCPストリームとは、どうやってみる
+- wiresharkのCUIのコマンドは
+- FQDN、サブドメイン、ドメインネームとは
+  - `www.yahoo.jp`
