@@ -11,7 +11,8 @@
 - burpsuiteを起動する
   - いつものようにブラウザを起動してintercept onにしてリクエストの中身を見る。このヘッダーに`X-Forwarded-For:localhost`を書き込めばサイトを見ることができる
   - Requestのヘッダに直接書き込むこともできるが、間違うとダメなのでInterceptの一番右端にProxy settingsがあるので、ここなら丁寧に設定できるので押す
-  - HTTP match and replaces rulesのところでAddを押す、フォームが開くのでReplaceのところに `X-Forwarded-For:localhost`と入力してok
+  - HTTP match and replaces rulesのところでAddを押す、フォームが開くのでReplaceのところに `X-Forwarded-For:localhost`と入力する。下にtestというボタンがあるので押すと、実際に書き換わるリクエストメッセージを見ることができる。確かめて、大丈夫ならokボタンを押す
+  - (追記)matchを書き換えると、マッチした文字と書き換える
   - ブラウザに戻って更新する
 - サイトにユーザを登録する
   - Registerを選んで登録する 
@@ -48,8 +49,11 @@ Accept-Encoding: gzip, deflate, br
 Connection: keep-alive
 
 ```
-
-
+- 1行目 リクエストライン
+  - method URI httpversion
+    - URIはリクエスト対象とも呼ぶ。`www.yahoo.com/news?query=unko`この場合、`/news?query?=unko`がURI 
+- ヘッダ
+  - Host -> WebブラウザがリクエストするWebサーバのドメイン名
 ## Question
 - network scanした時の192.168.56.1は何か？
 - メインPCからサイト見る
