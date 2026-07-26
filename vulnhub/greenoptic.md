@@ -33,6 +33,7 @@
     - greenoptic.vmは解決したいドメインネーム
     - axfrをつけることで、ドメインネームに属するサブドメイン全てを教えてくれる
   - domain nameとsub domain nameがあるので/etc/hostsに書き込む
+  - サブドメインネームを書き込まないと、サーバ内のHostに辿り着けないのでアクセスできない
 
 ```
 192.168.56.? greenoptic.vm recoveryplan.greenoptic.vm websrv01.greenoptic.vm
