@@ -14,6 +14,8 @@
   - robots.txt,adminが出てくる。javascriptという気になるのもある。このサイトはjavascriptでできているので、拡張子のjsをつけて、もう一度gobusterでオプション`-x js`をつける
   - users.jsが見つかる
 - users.jsを見ると、hanとskywalkerが記述してあるだけ
+- /robots.txtを見る
+  - /r2d2を見ると、何か文章がある 
 - ssh
   - han,skywalkerの両方でやってみるが、hanで侵入できる
   - `ssh han@$IP` password:babyYoda123
@@ -41,7 +43,7 @@
 - skywalkerでssh
 - `id`
   - anakinグループに属しているのがわかる
-  - `.bash_history`を見るとevil.pyに書き込んでcronで動かしているのがわかる
+  - `.bash_history`を見ると`service cron statusとcronを動かしているのがわかる
 - `sudo -l`
   - 使えない 
 - Darthのhomeを見る
