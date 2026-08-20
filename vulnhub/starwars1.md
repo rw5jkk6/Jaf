@@ -1,3 +1,13 @@
+### pspyの設定
+- pspy32&64
+  - 動いているプロセスを調べる。`ps aux`と違い動的に表示する
+  - pspy32bit&64bitがあるので、bigの方を落とす。検索したらGithubでリンクをコピーしてwgetでダウンロードする
+  - `https://github.com/DominicBreuker/pspy`
+  - `~/tools/pspy/` pspyディレクトリの下に32bitと64bitのを置いておく
+
+
+
+
 ### keyword
 - cewl,group,hydra,.bash_history,cron
 
@@ -43,9 +53,14 @@
 - skywalkerでssh
 - `id`
   - anakinグループに属しているのがわかる
-  - `.bash_history`を見ると`service cron statusとcronを動かしているのがわかる
+  - `.bash_history`を見ると`service cron status`とcronを動かしているのがわかる
 - `sudo -l`
   - 使えない 
+- cronをチェック
+  - `ps aux | grep root` これだと一瞬だけのプロセスしか見れないのでプロセスを動的に見れる違う方法を使う
+  - pspyをダウンロードして。64bitなので
+  - `./pspy64`
+  - しばらくするとcronでevil.pyが動いているのがわかる
 - Darthのhomeを見る
   - `cd /home/Darth`
   - evil.pyの下にリバースシェルを書き込む
