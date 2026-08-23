@@ -1,0 +1,23 @@
+## 論点
+- nmap
+  - 22,80,31337
+- webサイトを見る
+  - 80ポートは特に何もない
+  - 31337ポートのview sourceをみるとbase64がある
+- gobusterしてみる
+  - 31337ポートでするが、何も見つからない。assetsを見るとディレクトリリスティングになっている。ちなみに`vendors`とはphpなどのパッケージや管理ツールで作られる。ライブラリや外部パッケージを入れるもの
+- base64でデコード
+- サイトからファイルをダウンロード
+  - brain fuckで解読。普通に探したサイトですると、時間がかかるので速いwebサイトの`online brainfuck compiler`を使う
+- `crunch 8 8 -t k1ll0r%@ -o dict.txt`
+  - 8は最少数、8は最大数、%は数字、@は小文字 
+- `guest:k1ll0r7n`　ちなみに、このユーザ名とパスワードの組み合わせをクレデンシャルと呼ぶらしい
+- guestでsshに接続(解く方法は2種類ある)
+  - (1)`ssh guest@$IP -t "bash --noprofile"`
+  - (2)`ssh guest@$IP
+    - rbashが起動するのでbashが使えるようにする
+    - `echo $PATH` -> `echo prog/*` -> viコマンドが使えるのがわかる。これはハッキングラボでやったのと同じGTFobinsで調べてする 
+- sudo -l
+  - (ALL) ALL
+- root
+  - `sudo su`     
