@@ -1,20 +1,12 @@
 ## DC-2 454~
-## 目的
-- flag1 webサイト
-- flag2 wordpress login
-- flag3 ターゲットフォルダ
-- flag4 ターゲットフォルダ
-- finalflag rootフォルダ
-- 合計5つのフラグを表示する
 
 ### ポートスキャンまでは同じ
 - ポートスキャン
-  - 80(http)
-  - 7744(ssh) オプションに`-sV`とかつけないと謎のサービスを出してくることがある
-
+  - 80(http),7744(ssh)
+  
 ### WEBサイトを見る
 - `192.168.56.104`でサイトを見ると`dc-2`に飛ばされる(リダイレクトと呼ぶ)
-- 直すために`sudo vim /etc/hosts`に以下のように書き込む
+- ブラウザでinspectでnetworkを見る。dc2に飛ばされる。直すために`sudo vim /etc/hosts`に以下のように書き込む
 - `192.168.56.104 dc-2`
 - これはipアドレスにドメインネームを設定している
 - サイトが開くのでflag1を見つける
@@ -26,10 +18,9 @@
 
 
 ### gobuster
-- `gobuster dir -b 403,404 -u $URL -w /usr/share/wordlists/dirb/common.txt -x php -t 50`
-  - `$URL`の代わりに`$IP`でもOK
-  - `-b` statusの403,404は表示しない 
-  - `-x` 拡張子がphpも探す
+- `gobuster dir -u dc-2 -w /usr/share/wordlists/dirb/common.txt -x php -t 50`
+  - urlは$IPでもいける。dc-2でも出てくるurlは同じ
+  - `-x` wordpressなので拡張子がphpも探す
   - `-t` スレッド数を50に増やす。デフォルトは10
 - `/wp-admin`があることがわかる
 
@@ -38,14 +29,10 @@
 - wordpressが使われているので、できるだけ専用のwpscanコマンドを使った方が効率的である
 - それ以上は特にわからない
 
-### Nmap NSE
-- nmap nseはnmapのスキャンを利用して、同時にスクリプトを実行できる。ここではwordPressのユーザを見つけるスクリプトを使う。
-- nmapスクリプトで使えるのを探す。次ので検索すると出てくる
-  - `cat /usr/share/nmap/scripts/script.db | grep wordpress | grep user`
-  - 何が検索できる?filenameの部分がスクリプトのコード
-- `nmap -p80 --script http-wordpress-users dc-2`
-  - `--script`でスクリプトを指定できる。`http-wordpress-users.nse`でもいい
-  - `-p80`はなくてもいい 
+### wpscanでユーザを探す
+- `wpscan --url dc-2 -eu`
+  - $URLは使えない。ドメインネームでないとダメだからアドレスは使えない
+  - `-eu`は`-enumerate u`の略
 - userが3人であることがわかる
 - users.txtを作る
   - `cat > users.txt` で３人の名前を書いて、改行して ctrl + c
@@ -54,22 +41,13 @@
     jerry
     tom 
     ```
-- http-wordpress-usersのスクリプト(プログラム)は`/usr/share/nmap/scripts`
-- (補足)wpscanでもできる
-  - `wpscan --url dc-2 -eu`
-  - $URLは使えない。ドメインネームでないとダメだからアドレスは使えない
-  - `-eu`は`-enumerate u`の略
-
 
 
 ### CewL
 - CewLは指定したWEBサイトをスクレイピングして、キーワードを辞書ファイルとして生成するツール
 - `cewl dc-2 -w cewl.txt`
-  - パスが通っていないのでCewlフォルダに入って実行する
   - dc-2は/etc/hostsで設定したIPアドレスで、そこの対象のサイトをスクレイピングする
   - -wはファイルの書き込みを指定していて、ここでは一つ上のフォルダに指定している。
-  - 絶対パスで作ったフォルダに入れてもいい。実はこっちの方がいい `-w ~/vulnhub/dc2/cewl.txt`
-
 ### wpscan
 - `wpscan --url http://dc-2  -U users.txt -P cewl.txt`
 - または、こっちだとユーザネームもやってくるれる
@@ -77,7 +55,7 @@
   - --passwordsのオプションのhelp見る。そこにもし、オプションに--usernameがなければ、ユーザネームの列挙も一緒にすると書いてある
 
 
-### 認証情報
+### 認証情報(クレデンシャル)
 - 結果２人の情報がわかる
 
 |ユーザ名|パスワード|
@@ -89,35 +67,27 @@
 ### WordPressのダッシュボードにアクセスする
 - `http://dc-2/wp-admin/`
 - 二人のどちらかでNmapとHydraで得たuser,passwordを入力してアクセスする
-- Flag2を見つける 
+- 一般ユーザなので書き込むことはできないので、できることは特にない
 
-### jerryでssh
-- jerryでログインするが失敗する。jerryはwordpressのパスワードとsshのパスワードを使い回していない
+### 試しにsshする
+- jerryでssh
+  - jerryでログインするが失敗する。jerryはwordpressのパスワードとsshのパスワードを使い回していない
 
-### tomでSSH
-- wordPressの投稿者がsshのユーザと仮定している
-- tomでssh `ssh -p 7744 tom@$IP`
+- tomでSSH
+  - wordPressの投稿者がsshのユーザと仮定している
+  - tomでssh `ssh -p 7744 tom@$IP`
+  - `ssh -p7744 tom@$IP -t "bash --noprofile"` rbash: bash: command not foundのエラーが出る
 - passwordを入力
 
 ### 実行できるコマンドを調べる
 - `echo $PATH`を見ると、PATHが一つしかない、ここにあるコマンドが使える
 - `ls $PATH`を見るとコマンドが４つしか使えない
-- プロンプトが返ってくる `echo $SHELL`でrbashという制限が多いシェルだとわかる 
+- プロンプトが返ってくる `echo $SHELL`でrbashという制限が多いシェルだとわかる
+- exportにpathを書き込もうとすると、`-rbash: PATH: readonly variable`とエラーが出る
 
 ### 通常のシェルを使えるようにする
 - viは使えるのでGTFOBinsで`vi`でシェルを呼び出すのを見つける
-- viを呼び出す
-- viのsetコマンドの説明
-  - setコマンドはviの設定をすることができる
-  - 例えば`:set number`とすると行数を表示できる。そして頭に`:set no~`noをつけると解除できる
-  - 今使っている設定を知るには`:set オプション?`とする 
-- 今使っているshellを調べる`:set shell?`
-- `:set shell=/bin/sh`
-  - shellをshに変更する
-- Enterを押す 
-- `:shell`
-  - shellに戻る指示 
-- Enterを押して指示を決定
+- `vi -c ':set shell=/bin/sh | shell'`
 - `$`が出たら成功、これで通常のシェルが使えるようになる
 
 ### シェルを確認する
@@ -134,6 +104,7 @@
 - (補足)ちなみに、suコマンドは/binにあるので、これだけでもいい。
 - (補足の補足)ここではjerryのパスワードがわかっているので、suコマンドだけが使えたらいいので、ParrotOSのターミナルでsuコマンドのPATHさえわかればいいのでPATHを調べる。`which -a su`調べて`/usr/bin/su jerry`または`/bin/su jerry`でもいいが、これはParrotのPATHの場所なのでターゲットのOSとは異なる可能性がある。実際に`/usr/bin/`にはsuコマンドはないので、結果として/binだけでいい
 
+
 ### ユーザでsshする
 - 複数の候補があった時に一番ルートが取れそうな権限の強いユーザの利用を目指す
 
@@ -142,6 +113,7 @@
 - suとsshのパスワードは違う。まえのパスワードはsuのパスワードだったようだ
 
 ### sudoコマンドの設定を調べる
+- jerryの`id`を見ても`sudo`はない。が、`sudo -l`は使える
 - `sudo -l`
 - 次の表示がされるが、これはgitをrootなしで使えることがわかる
   - `(root) NOPASSWORD: /usr/bin/git`
@@ -158,7 +130,43 @@
 ### Flagを取得
   - `cd /root | cat final-flag.txt` 
 
+## 補足
+### Nmap NSE
+- nmap nseはnmapのスキャンを利用して、同時にスクリプトを実行できる。ここではwordPressのユーザを見つけるスクリプトを使う。
+- http-wordpress-usersのスクリプト(プログラム)は`/usr/share/nmap/scripts`
+- nmapスクリプトで使えるのを探す。次ので検索すると出てくる
+  - `cat /usr/share/nmap/scripts/script.db | grep wordpress | grep user`
+  - 何が検索できる?filenameの部分がスクリプトのコード
+- `nmap -p80 --script http-wordpress-users dc-2`
+  - `--script`でスクリプトを指定できる。`http-wordpress-users.nse`でもいい
+  - `-p80`はなくてもいい 
+
+### (補足)rbashの正体
+- .bashrcや.bash-profileの中身を見ると同じように、一行だけ書いてある
+  - `export PATH=/home/tom/usr/bin`
+  - rbashの設定はPATHを書き換えて、使えるコマンドを制限している。例えばviコマンドは次のようになっている
+  - `lrwxrwxrwx 1 tom tom 11 Mar 21 2019 vi -> /usr/bin/vi`
+
+### viでsh
+- viを呼び出す
+- (補足)viのsetコマンドの説明
+  - setコマンドはviの設定をすることができる
+  - 例えば`:set number`とすると行数を表示できる。そして頭に`:set no~`noをつけると解除できる
+  - 今使っている設定を知るには`:set オプション?`とする 
+  - 今使っているshellを調べる`:set shell?`
+- `:set shell=/bin/sh`
+  - shellをshに変更する
+- Enterを押す 
+- `:shell`
+  - shellに戻る指示 
+- Enterを押して指示を決定
+
 ## (参考)root取得後
+- domain nameの設定は(ここを書き換えても変わらない)
+  - /var/www/html/wp-config.php
+  - `define('WP_HOME','http://dc-2');`
+  - `define('WP_SITEURL','http://dc-2');`
+  - /etc/apache2/sites-available/000-default.confは書き換える必要ない
 - dc2のスナップショットをとる
 - rootのpasswordを変更する
   - `passwd`
