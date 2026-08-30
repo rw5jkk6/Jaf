@@ -1,4 +1,7 @@
 ## DC-2 454~
+## keyword
+- escape(エスケープ)
+- クレデンシャル
 
 ### ポートスキャンまでは同じ
 - ポートスキャン
@@ -86,7 +89,8 @@
 - exportにpathを書き込もうとすると、`-rbash: PATH: readonly variable`とエラーが出る
 
 ### 通常のシェルを使えるようにする
-- viは使えるのでGTFOBinsで`vi`でシェルを呼び出すのを見つける
+- less,ls,scp,viの4つあるが、ls以外はgtfobinsがあるがviしか使えない
+- viは使えるのでエスケープさせてGTFOBinsで`vi`でシェルを呼び出すのを見つける
 - `vi -c ':set shell=/bin/sh | shell'`
 - `$`が出たら成功、これで通常のシェルが使えるようになる
 
@@ -118,7 +122,7 @@
 - 次の表示がされるが、これはgitをrootなしで使えることがわかる
   - `(root) NOPASSWORD: /usr/bin/git`
 ### git
-- GTFOBinsでgitコマンドを利用して、root権限を取得する
+- GTFOBinsでエスケープでgitコマンドを利用して、root権限を取得する
 - `sudo git -p help config`
 - `:`と出てきたら成功で以下を入力
 - `!/bin/sh`
