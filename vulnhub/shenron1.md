@@ -26,9 +26,6 @@
   - php-reverse-shellを貼り付けて左上にある緑色のsaveする
   - Parrotでncコマンドで待ち受ける
   - template_previewボタンを押す
-  - (補足)rlwrapで待受すると何が違う
-    - `rlwrap nc -nlvp 9001`
-    - 対話型シェルにしてもコマンド履歴が使えるので、こっちを使う
 - 対話型シェルをする
 - ユーザが誰がいるか調べる
   - `ls -l /home` 
@@ -47,6 +44,8 @@
   - `cd /home/jenny/.ssh`
   - shenron権限でid_rsa.pubをshenronのauthorized_keysに書き込む。ちなみに`/authorized_keys/`とするとダメ。authorized_keysはファイルなので
   - `sudo -u shenron /usr/bin/cp id_rsa.pub /home/shenron/.ssh/authorized_keys`
+  - (注意)copyなので/etc/passwdに書き込みできるかと思ったがrootでないからダメ
+  - (注意)パーミッションの関係でid_rsa.pubを`/tmp`に持っていかないとダメな場合もある
 
 - これでshenronに公開鍵を置けたのでjennyでsshする
   - `ssh shenron@localhost`
