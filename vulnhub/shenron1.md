@@ -16,13 +16,14 @@
 - http://$IP/joomla/のサイト見ると何かまだサイトが隠れていそう
   - もう一回gobusterする
   - `/administrator`に接続してダッシュボードにログインする
+  - 初めのサイトにもログインサイトはあったが、/adminのログインサイトと何が違う？
 - joomlaなのでjoomscanをやってみる
   - `joomscan -u $IP`
   - 特に新しい情報がない。さっきと同じアドレスぐらいしか出てこない  
 - ダッシュボードにログインする
   - cmsでまず試すのはpluginやtemplateからreverse-shellをアップロードしたり貼り付けたりできないか
   - サイトの上にあるextensions -> Templates -> Templates
-  - Beez3,Protostarのどっちを選んでもいい、index.php,error.phpのどれを選んでもいい
+  - Beez3,Protostarのどっちを選んでもいい、index.phpを選ぶ
   - php-reverse-shellを貼り付けて左上にある緑色のsaveする
   - Parrotでncコマンドで待ち受ける
   - template_previewボタンを押す
@@ -30,12 +31,15 @@
 - ユーザが誰がいるか調べる
   - `ls -l /home` 
 - joomlaの設定ファイルを見て、データベースのユーザとパスワードをコピーする
+  - `cd /var/www/html/joomla`
+  - `cat configuration.php`ユーザとパスワードをメモる 
 - jennyに切り替える
+  - `su jenny` 
 - SUID
   - 特になし
 - `sudo -l`
-  - `/usr/bin/cp`があるのがわかる
-  - jennyが公開鍵と秘密鍵を作って、公開鍵をshenronにコピーするのを試みる
+  - `(shenron) NOPASSWD: /usr/bin/cp`があるのがわかる。これはshenronユーザの権限でコマンドが使えるという意味
+  - cpコマンドをgtfobinsを探してもエスケープできそうにない。jennyが公開鍵と秘密鍵を作って、公開鍵をshenronにコピーするのを試みる
 - とりあえず次はshenronユーザを目指す。shenronのホームを見てみようとするが、権限不足でダメ
 - shenronユーザに公開鍵を置いて、sshをする
   - ファイル名はデフォルトでパスワードは好きなのにする。別に空でもいい
@@ -56,6 +60,7 @@
   - /var/opt/password.txt
 - `sudo -l`を再びする
 - rootになる
+  - gtfobins見たら、これはエスケープできそう 
   -  `sudo /usr/bin/apt update -o APT::Update::Pre-Invoke::=/bin/sh`
    
      
