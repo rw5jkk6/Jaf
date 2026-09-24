@@ -1,0 +1,26 @@
+## 攻略
+- nmap
+  - 21,22,80,3306 
+- webサイトみる
+  - sourceにも何もなし 
+- gobusterする
+  - 特に何もない 
+- ftpに接続
+  - fileをダウンロード
+  - skyユーザが見つかる
+- ftpに対してユーザskyのパスワードを探す
+  - `hydra -l sky -P /usr/share/wordlists/rockyou.txt ftp://$IP`
+  - thebest
+  - なぜftpでhydraするのか謎どこにも書いていない。sshのポートも開いているのに
+- ftpにskyでアクセスする
+  - user.flagをダウンロードする
+  - 中身を確認するとshell scriptになっている。これにリバースシェルを書き換えてuploadしたらいいんでは
+- Parrotでuser.floagファイルにreverse-shellを書き込む
+- もう一度ftpにskyでアクセスする
+  - user.flagを　uploadする。同じ名前のファイルをuploadすると上書きされる
+- Parrotで待ち受ける
+- 時間が経つとリバースシェルが確立される
+- suid
+  - /bin/bashが見つかる
+- rootになる
+  - `/bin/bash -p`     
