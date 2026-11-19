@@ -131,6 +131,21 @@
 
 ## 追記
 
+### Base32,58,64について
+- これはBase何?
+  - `aGl0b3NoaSBpcyBweXV0YXJvdSB0aW50aW4gYnVyYWJ1cmEgcHl1dGFyb3U=`
+- 特徴
+
+||文字列の数|文字の種類|
+|:--|:--|:--|
+|base32|8の倍数|32|
+|base58|決まってない|58|
+|base64|4の倍数|64|
+
+- `echo -n aGl0b3NoaSBpcyBweXV0YXJvdSB0aW50aW4gYnVyYWJ1cmEgcHl1dGFyb3U= | wc`
+- `echo aGl0b3NoaSBpcyBweXV0YXJvdSB0aW50aW4gYnVyYWJ1cmEgcHl1dGFyb3U= | grep -o . | sort | uniq | wc `
+
+
 ### SecListsの辞書を使うので、Parrotのどこにあるか調べる
 - SecLists-masterがどこにあるかを調べる
   - `find / -iname "*master" 2>/dev/null`
